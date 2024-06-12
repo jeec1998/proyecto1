@@ -32,7 +32,7 @@ const RegisterScreen = () => {
     try {
       const response = await axios.post(`${API_URL}/user`, userData);
       Alert.alert('Registro exitoso');
-      navigation.navigate('Profile');
+      navigation.navigate('First');
     } catch (error) {
       console.error(error);
       Alert.alert('Error de registro', 'Hubo un problema al registrar el usuario. Por favor, inténtalo de nuevo.');
