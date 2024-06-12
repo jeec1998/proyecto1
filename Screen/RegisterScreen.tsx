@@ -1,0 +1,179 @@
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import Assets from './Assets';
+
+const RegisterScreen = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigation = useNavigation();
+  const apiUrl = process.env.API_URL; 
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Las contraseñas no coinciden.');
+      return;
+    }
+
+    const userData = {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      password,
+    };
+
+    try {
+      const response = await axios.post('https://25c1-157-100-143-73.ngrok-free.app/user', userData);
+      Alert.alert('Registro exitoso');
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error de registro', 'Hubo un problema al registrar el usuario. Por favor, inténtalo de nuevo.');
+    }
+  };
+
+  const goToLoginScreen = () => {
+  };
+
+  return (
+    <View style={styles.container}>
+      <Image source={Assets.backgroundImage} style={styles.backgroundImage} />
+      <TouchableOpacity style={styles.imageContainer} onPress={goToLoginScreen}>
+        <Image source={Assets.patitaback} style={styles.image} />
+      </TouchableOpacity>
+      <View style={styles.registerContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Nombre"
+          placeholderTextColor="#ccc"
+          value={firstName}
+          onChangeText={setFirstName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Apellido"
+          placeholderTextColor="#ccc"
+          value={lastName}
+          onChangeText={setLastName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Correo Electrónico"
+          placeholderTextColor="#ccc"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Número de Teléfono"
+          placeholderTextColor="#ccc"
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
+          keyboardType="phone-pad"
+        />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            placeholderTextColor="#ccc"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+          />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <Text style={styles.showPasswordText}>{showPassword ? 'Ocultar' : 'Mostrar'}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Confirmar Contraseña"
+            placeholderTextColor="#ccc"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry={!showConfirmPassword}
+          />
+          <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+            <Text style={styles.showPasswordText}>{showConfirmPassword ? 'Ocultar' : 'Mostrar'}</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Registrarse</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  imageContainer: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+  },
+  image: {
+    width: 40,
+    height: 40,
+  },
+  registerContainer: {
+    width: '80%',
+    alignItems: 'center',
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    fontSize: 16,
+    color: '#000',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+  },
+  showPasswordText: {
+    marginLeft: 10,
+    color: '#000',
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: '#573321',
+    padding: 16,
+    borderRadius: 8,
+    marginTop: 20,
+    width: '100%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+});
+
+export default RegisterScreen;
