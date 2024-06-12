@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, Image } fro
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import Assets from './Assets';
-
+import { API_URL } from '@env';
 const RegisterScreen = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -30,9 +30,9 @@ const RegisterScreen = () => {
     };
 
     try {
-      const response = await axios.post('https://25c1-157-100-143-73.ngrok-free.app/user', userData);
+      const response = await axios.post(`${API_URL}/user`, userData);
       Alert.alert('Registro exitoso');
-      navigation.navigate('Login');
+      navigation.navigate('Profile');
     } catch (error) {
       console.error(error);
       Alert.alert('Error de registro', 'Hubo un problema al registrar el usuario. Por favor, inténtalo de nuevo.');
@@ -40,6 +40,7 @@ const RegisterScreen = () => {
   };
 
   const goToLoginScreen = () => {
+    navigation.navigate('Login');
   };
 
   return (

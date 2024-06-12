@@ -9,7 +9,7 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 
   const handleLogin = () => {
-    // Aquí puedes añadir la lógica de autenticación
+   
     Alert.alert('Login', `Email: ${email}, Password: ${password}`);
   };
 

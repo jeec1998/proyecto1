@@ -3,8 +3,7 @@ import Location from 'expo-location';
 import {Alert, StyleSheet, View,  } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-
-
+import { GOOGLE_MAPS_APIKEY } from '@env';
 import Assets from './Assets';
 
 const MapComponent = () => {
@@ -60,7 +59,7 @@ const MapComponent = () => {
                 <MapViewDirections
                     origin={location}
                     destination={destination}
-                    apikey='AIzaSyBf1JNTNolET6iqIPGff0R7xvl7Fth_65c'
+                    apikey={GOOGLE_MAPS_APIKEY}
                     strokeWidth={5}
                     strokeColor="brown"
                 />

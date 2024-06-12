@@ -1,26 +1,37 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import Assets from './Assets';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 
+const FirstScreen = () => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
 
-const ProfileScreen = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Perfil del Usuario</Text>
-            <View style={styles.profileInfo}>
-                <Text style={styles.label}>Nombre:</Text>
-                <Text style={styles.info}>John Doe</Text>
+            <Text style={styles.header}>Información del Cliente</Text>
+            <View style={styles.formContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Nombre"
+                    value={name}
+                    onChangeText={setName}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Correo Electrónico"
+                    value={email}
+                    onChangeText={setEmail}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Número de Teléfono"
+                    value={phone}
+                    onChangeText={setPhone}
+                />
+                <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Actualizar</Text>
+                </TouchableOpacity>
             </View>
-            <View style={styles.profileInfo}>
-                <Text style={styles.label}>Correo Electrónico:</Text>
-                <Text style={styles.info}>johndoe@example.com</Text>
-            </View>
-            <View style={styles.profileInfo}>
-                <Text style={styles.label}>Número de Teléfono:</Text>
-                <Text style={styles.info}>+1234567890</Text>
-            </View>
-            
         </View>
     );
 };
@@ -36,16 +47,28 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
     },
-    profileInfo: {
-        marginBottom: 10,
+    formContainer: {
+        marginBottom: 20,
     },
-    label: {
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+    },
+    button: {
+        backgroundColor: '#573321',
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
     },
-    info: {
-        fontSize: 16,
-    },
 });
 
-export default ProfileScreen;
+export default FirstScreen;
