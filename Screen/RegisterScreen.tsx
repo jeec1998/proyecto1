@@ -159,6 +159,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     borderWidth: 1,
+    backgroundColor: '#fff',
     borderColor: '#000',
     borderRadius: 8,
     marginVertical: 10,
@@ -168,11 +169,11 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     fontSize: 16,
-    color: '#FFF',
+    color: '#000',
   },
   showPasswordText: {
     marginLeft: 10,
-    color: '#FFFFF',
+    color: '#000',
     fontSize: 16,
   },
   button: {
