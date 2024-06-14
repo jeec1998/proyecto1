@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import Assets from './Assets';
 import { API_URL } from '@env';
+
 const RegisterScreen = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -15,6 +16,7 @@ const RegisterScreen = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigation = useNavigation();
   const apiUrl = process.env.API_URL; 
+
   const handleRegister = async () => {
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Las contraseñas no coinciden.');
@@ -83,7 +85,7 @@ const RegisterScreen = () => {
         />
         <View style={styles.passwordContainer}>
           <TextInput
-            style={styles.input}
+            style={styles.passwordInput}
             placeholder="Contraseña"
             placeholderTextColor="#ccc"
             value={password}
@@ -91,12 +93,12 @@ const RegisterScreen = () => {
             secureTextEntry={!showPassword}
           />
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Text style={styles.showPasswordText}>{showPassword ? 'Ocultar' : 'Mostrar'}</Text>
+            <Text style={styles.showPasswordText}>{showPassword ? 'Ocultar' : 'Ver'}</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.passwordContainer}>
           <TextInput
-            style={styles.input}
+            style={styles.passwordInput}
             placeholder="Confirmar Contraseña"
             placeholderTextColor="#ccc"
             value={confirmPassword}
@@ -104,7 +106,7 @@ const RegisterScreen = () => {
             secureTextEntry={!showConfirmPassword}
           />
           <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-            <Text style={styles.showPasswordText}>{showConfirmPassword ? 'Ocultar' : 'Mostrar'}</Text>
+            <Text style={styles.showPasswordText}>{showConfirmPassword ? 'Ocultar' : 'Ver'}</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.button} onPress={handleRegister}>
@@ -156,10 +158,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 8,
+    marginVertical: 10,
+    paddingHorizontal: 10,
+  },
+  passwordInput: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    color: '#FFF',
   },
   showPasswordText: {
     marginLeft: 10,
-    color: '#000',
+    color: '#FFFFF',
     fontSize: 16,
   },
   button: {
