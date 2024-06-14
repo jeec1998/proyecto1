@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 const FirstScreen = () => {
     const [search, setSearch] = useState('');
     const [menuVisible, setMenuVisible] = useState(false);
-    const navigation = useNavigation(); // Obtiene el objeto de navegación
+    const navigation = useNavigation(); 
     const goToProfileScreen = () => {
         navigation.navigate('Profile');
       };

@@ -27,7 +27,7 @@ const MapComponent = () => {
   const startLocationUpdates = () => {
     intervalRef.current = setInterval(() => {
       getLocation();
-    }, 100);
+    }, 1000);
   };
 
   const getLocation = () => {
@@ -42,11 +42,11 @@ const MapComponent = () => {
       (error) => {
         Alert.alert('Error al obtener la ubicación:', error.message);
       },
-      {
+     /*  {
         enableHighAccuracy: true,
         timeout: 20000,
         maximumAge: 1000,
-      }
+      } */
     );
   };
 

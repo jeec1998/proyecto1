@@ -32,7 +32,7 @@ const RegisterScreen = () => {
     };
 
     try {
-      const response = await axios.post(`${API_URL}/user`, userData);
+      const response = await axios.post('https://55a9-2801-16-4800-5200-24bf-66a9-4c6d-2df3.ngrok-free.app/user', userData);
       Alert.alert('Registro exitoso');
       navigation.navigate('First');
     } catch (error) {
