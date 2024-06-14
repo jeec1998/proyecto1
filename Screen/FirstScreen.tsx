@@ -46,10 +46,16 @@ const FirstScreen = () => {
                                 <Text style={styles.menuItem}>Perfil</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={toggleMenu}>
-                                <Text style={styles.menuItem}>Direcciones</Text>
+                                <Text style={styles.menuItem}>Veterinarias</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={toggleMenu}>
-                                <Text style={styles.menuItem}>Configuración</Text>
+                                <Text style={styles.menuItem}>Favoritos</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={toggleMenu}>
+                                <Text style={styles.menuItem}>Top 5</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={toggleMenu}>
+                                <Text style={styles.menuItem}>VET-IA</Text>
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity style={styles.modeVeterinariaButton} onPress={toggleMenu}>
