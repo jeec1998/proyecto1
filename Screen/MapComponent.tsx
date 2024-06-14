@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -15,12 +15,22 @@ const MapComponent = () => {
     latitude: -1.657283,
     longitude: -78.677242,
   });
+  const intervalRef = useRef(null);
 
   useEffect(() => {
-    getLocation();
+    startLocationUpdates();
+    return () => {
+      clearInterval(intervalRef.current);
+    };
   }, []);
 
-  async function getLocation() {
+  const startLocationUpdates = () => {
+    intervalRef.current = setInterval(() => {
+      getLocation();
+    }, 100);
+  };
+
+  const getLocation = () => {
     Geolocation.getCurrentPosition(
       (position) => {
         const current = {
@@ -30,7 +40,7 @@ const MapComponent = () => {
         setLocation(current);
       },
       (error) => {
-        Alert.alert('Error getting location:', error.message);
+        Alert.alert('Error al obtener la ubicación:', error.message);
       },
       {
         enableHighAccuracy: true,
@@ -38,7 +48,7 @@ const MapComponent = () => {
         maximumAge: 1000,
       }
     );
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -53,7 +63,6 @@ const MapComponent = () => {
         }}
       >
         <Marker
-          draggable
           coordinate={location}
           title="Tú estás aquí"
           onDragEnd={(e) => setLocation(e.nativeEvent.coordinate)}
