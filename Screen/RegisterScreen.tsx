@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import Assets from './Assets';
 import { API_URL } from '@env';
+import App from './App';
 
 const RegisterScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -32,9 +33,9 @@ const RegisterScreen = () => {
     };
 
     try {
-      const response = await axios.post('https://55a9-2801-16-4800-5200-24bf-66a9-4c6d-2df3.ngrok-free.app/user', userData);
+      const response = await axios.post(`${API_URL}/auth/register`, userData);
       Alert.alert('Registro exitoso');
-      navigation.navigate('First');
+      navigation.navigate('Login');
     } catch (error) {
       console.error(error);
       Alert.alert('Error de registro', 'Hubo un problema al registrar el usuario. Por favor, inténtalo de nuevo.');

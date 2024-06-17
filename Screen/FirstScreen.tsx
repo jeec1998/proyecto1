@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, Modal } from 'react-native';
 import MapComponent from './MapComponent';
 import { useNavigation } from '@react-navigation/native'; 
-
-
-
 const FirstScreen = () => {
     const [search, setSearch] = useState('');
     const [menuVisible, setMenuVisible] = useState(false);
@@ -12,6 +9,15 @@ const FirstScreen = () => {
     const goToProfileScreen = () => {
         navigation.navigate('Profile');
       };
+      const goToModVeterinary = () => {
+        navigation.navigate('ModVeterinary');
+      };
+  /*     const goToFavoriteVets = () => {
+        navigation.navigate('FavoriteVets');
+      };
+      const goToVets = () => {
+        navigation.navigate('Vets');
+      }; */
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -49,7 +55,7 @@ const FirstScreen = () => {
                                 <Text style={styles.menuItem}>Veterinarias</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={toggleMenu}>
-                                <Text style={styles.menuItem}>Favoritos</Text>
+                                <Text style={styles.menuItem}>Favoritas</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={toggleMenu}>
                                 <Text style={styles.menuItem}>Top 5</Text>
@@ -58,7 +64,7 @@ const FirstScreen = () => {
                                 <Text style={styles.menuItem}>VET-IA</Text>
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.modeVeterinariaButton} onPress={toggleMenu}>
+                        <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToModVeterinary}>
                             <Text style={styles.modeVeterinariaText}>Modo Veterinaria</Text>
                         </TouchableOpacity>
                     </View>

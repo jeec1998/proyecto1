@@ -1,24 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState,  } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Assets from './Assets';
+import { API_URL } from '@env';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
-  const handleLogin = () => {
-   
-    Alert.alert('Login', `Email: ${email}, Password: ${password}`);
+  const handleLogin = async () => {
+    const loginData = { email, password };
+    try {
+      const response = await axios.post(`${API_URL}/auth/login`, loginData);
+    
+      console.log('Respuesta del servidor:', response.data); 
+      const accessToken = response.data.data.accessToken; 
+      
+      if (accessToken) {
+        Alert.alert('Login exitoso', 'Bienvenido');
+        navigation.navigate('First');
+      } else {
+        Alert.alert('Error de inicio de sesión', 'No se recibió accessToken del servidor');
+      }
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+      if (error.response) {
+        console.error('Respuesta del servidor:', error.response.data); // Verifica la respuesta de error del servidor
+      }
+      Alert.alert('Error de inicio de sesión', 'Credenciales incorrectas. Por favor, inténtalo de nuevo.');
+    }
+    
+  }    
+
+  const gotoFirstScreen = () => {
+    navigation.navigate('First');
   };
 
-  const goToHomeScreen = () => {
-    navigation.navigate('Home');
-  };
-  const gotoFirstScreen = () =>{
-    navigation.navigate('First')
-  }
   const goToRegisterScreen = () => {
     navigation.navigate('Register');
   };
@@ -70,7 +90,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',  // Cambia resizeMode a 'cover'
+    resizeMode: 'cover',
   },
   imageContainer: {
     position: 'absolute',

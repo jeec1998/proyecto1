@@ -5,23 +5,26 @@ import Assets from './Assets';
 import { useNavigation } from '@react-navigation/native';
 import { API_URL } from '@env';
 
-const FirstScreen = () => {
-    const [name, setName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [password, setPassword] = useState('');
+const ProfileScreen = () => {
+    const [userData, setUserData] = useState({
+        name: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        password: ''
+    });
     const navigation = useNavigation();
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`${API_URL}/user`);
-                const { name, lastName, email, phone } = response.data;
-                setName(name);
-                setLastName(lastName);
-                setEmail(email);
-                setPhone(phone);
+                const accessToken = ''; // Aquí deberías obtener el accessToken almacenado previamente
+                const headers = {
+                    Authorization: `Bearer ${accessToken}`
+                };
+                const response = await axios.get(`${API_URL}/user`, { headers });
+                console.log('Response from API:', response.data); // Verifica la estructura de la respuesta en la consola
+                setUserData(response.data); // Actualiza el estado con los datos recibidos
             } catch (error) {
                 console.error(error);
                 Alert.alert('Error', 'No se pudo obtener la información del usuario.');
@@ -32,15 +35,20 @@ const FirstScreen = () => {
     }, []);
 
     const handleUpdate = async () => {
+        const { name, lastName, phone, password } = userData;
         const updatedUserData = {
             name,
             lastName,
             phone,
-            password,
+            password
         };
 
         try {
-            await axios.put(`${API_URL}/user`, updatedUserData);
+            const accessToken = ''; // Aquí también deberías obtener el accessToken almacenado previamente
+            const headers = {
+                Authorization: `Bearer ${accessToken}`
+            };
+            await axios.put(`${API_URL}/user`, updatedUserData, { headers });
             Alert.alert('Actualización exitosa', 'La información del usuario ha sido actualizada.');
         } catch (error) {
             console.error(error);
@@ -58,32 +66,32 @@ const FirstScreen = () => {
                 <TextInput
                     style={styles.input}
                     placeholder="Nombre"
-                    value={name}
-                    onChangeText={setName}
+                    value={userData.name}
+                    onChangeText={(value) => setUserData({ ...userData, name: value })}
                 />
                 <TextInput
                     style={styles.input}
                     placeholder="Apellido"
-                    value={lastName}
-                    onChangeText={setLastName}
+                    value={userData.lastName}
+                    onChangeText={(value) => setUserData({ ...userData, lastName: value })}
                 />
                 <TextInput
                     style={[styles.input, { backgroundColor: '#e0e0e0' }]}
                     placeholder="Correo Electrónico"
-                    value={email}
+                    value={userData.email}
                     editable={false}
                 />
                 <TextInput
                     style={styles.input}
                     placeholder="Número de Teléfono"
-                    value={phone}
-                    onChangeText={setPhone}
+                    value={userData.phone}
+                    onChangeText={(value) => setUserData({ ...userData, phone: value })}
                 />
                 <TextInput
                     style={styles.input}
                     placeholder="Contraseña"
-                    value={password}
-                    onChangeText={setPassword}
+                    value={userData.password}
+                    onChangeText={(value) => setUserData({ ...userData, password: value })}
                     secureTextEntry
                 />
                 <TouchableOpacity style={styles.button} onPress={handleUpdate}>
@@ -105,8 +113,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     logo: {
-        width: 500,
-        height: 500,
+        width: 200,
+        height: 200,
         resizeMode: 'contain',
     },
     header: {
@@ -116,7 +124,7 @@ const styles = StyleSheet.create({
     },
     formContainer: {
         marginBottom: 20,
-        marginTop: -200,
+        marginTop: -100,
     },
     input: {
         height: 40,
@@ -139,4 +147,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FirstScreen;
+export default ProfileScreen;

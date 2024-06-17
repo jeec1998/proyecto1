@@ -75,12 +75,14 @@ android {
     compileSdk rootProject.ext.compileSdkVersion
 
     namespace "com.proyecto1"
+    
     defaultConfig {
         applicationId "com.proyecto1"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [auth0Domain: "${auth0Domain}", auth0Scheme: "${auth0Scheme}"]
     }
     signingConfigs {
         debug {
