@@ -3,14 +3,14 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert } fro
 import axios from 'axios';
 import Assets from './Assets';
 import { useNavigation } from '@react-navigation/native';
-import { API_URL } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = () => {
     const [userData, setUserData] = useState({
-        name: '',
+        firstName: '',
         lastName: '',
         email: '',
-        phone: '',
+        phoneNumber: '',
         password: ''
     });
     const navigation = useNavigation();
@@ -18,37 +18,50 @@ const ProfileScreen = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const accessToken = ''; // Aquí deberías obtener el accessToken almacenado previamente
+                const accessToken = await AsyncStorage.getItem('accessToken');
+                if (!accessToken) {
+                    Alert.alert('Error', 'No se encontró el access token.');
+                    return;
+                }
+    
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`${API_URL}/user`, { headers });
-                console.log('Response from API:', response.data); // Verifica la estructura de la respuesta en la consola
-                setUserData(response.data); // Actualiza el estado con los datos recibidos
+                const response = await axios.get(`https://53eb-157-100-143-78.ngrok-free.app/user/${accessToken}`, { headers });
+                console.log('Response from API:', response.data);
+                
+                const { firstName, lastName, email, phoneNumber, password } = response.data; // Ajusta esto según la estructura de la respuesta de tu API
+                setUserData({ firstName, lastName, email, phoneNumber, password });
             } catch (error) {
                 console.error(error);
                 Alert.alert('Error', 'No se pudo obtener la información del usuario.');
             }
         };
-
+    
         fetchUserData();
     }, []);
+    
 
     const handleUpdate = async () => {
-        const { name, lastName, phone, password } = userData;
+        const { firstName, lastName, phoneNumber, password } = userData;
         const updatedUserData = {
-            name,
+            firstName,
             lastName,
-            phone,
+            phoneNumber,
             password
         };
 
         try {
-            const accessToken = ''; // Aquí también deberías obtener el accessToken almacenado previamente
+            const accessToken = await AsyncStorage.getItem('accessToken');
+            if (!accessToken) {
+                Alert.alert('Error', 'No se encontró el access token.');
+                return;
+            }
+
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.put(`${API_URL}/user`, updatedUserData, { headers });
+            await axios.put(`https://53eb-157-100-143-78.ngrok-free.app/user`, updatedUserData, { headers });
             Alert.alert('Actualización exitosa', 'La información del usuario ha sido actualizada.');
         } catch (error) {
             console.error(error);
@@ -66,8 +79,8 @@ const ProfileScreen = () => {
                 <TextInput
                     style={styles.input}
                     placeholder="Nombre"
-                    value={userData.name}
-                    onChangeText={(value) => setUserData({ ...userData, name: value })}
+                    value={userData.firstName}
+                    onChangeText={(value) => setUserData({ ...userData, firstName: value })}
                 />
                 <TextInput
                     style={styles.input}
@@ -84,8 +97,8 @@ const ProfileScreen = () => {
                 <TextInput
                     style={styles.input}
                     placeholder="Número de Teléfono"
-                    value={userData.phone}
-                    onChangeText={(value) => setUserData({ ...userData, phone: value })}
+                    value={userData.phoneNumber}
+                    onChangeText={(value) => setUserData({ ...userData, phoneNumber: value })}
                 />
                 <TextInput
                     style={styles.input}
