@@ -8,6 +8,8 @@ import HomeScreen from './HomeScreen';
 import FirstScreen from './FirstScreen';
 import ProfileScreen from './ProfileScreen';
 import ModVeterinary from './ModoVeterinaria';
+import VeterinarysScreen from './VeterinarysScreen';
+
 /* import FavoriteVets from './FavoriteVets';
 import Vets from './Veterinary';
  */
@@ -23,9 +25,9 @@ function App() {
         <Stack.Screen name="First" component={FirstScreen}/>
         <Stack.Screen name='Profile' component={ProfileScreen}/>
         <Stack.Screen name='ModVeterinary' component={ModVeterinary}/>
+        <Stack.Screen name='VeterinarysScreen' component={VeterinarysScreen}/>
        {/*  <Stack.Screen name='FavoriteVets' component={FavoriteVets}/>
         <Stack.Screen name='Vets' component={Vets}/> */}
-
       </Stack.Navigator>
     </NavigationContainer>
   );

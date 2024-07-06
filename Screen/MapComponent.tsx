@@ -1,53 +1,28 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import Geolocation from '@react-native-community/geolocation'; // Importar Geolocation desde @react-native-community/geolocation
 import { GOOGLE_MAPS_APIKEY } from '@env';
-import Assets from './Assets';
+import axios from 'axios';
 
-const MapComponent = () => {
-  const [location, setLocation] = useState({
-    latitude: -1.66355,
-    longitude: -78.6546,
-  });
-  const [destination, setDestination] = useState({
-    latitude: -1.657283,
-    longitude: -78.677242,
-  });
-  const intervalRef = useRef(null);
+const MapComponent = ({ location, selectedDestination, setSelectedDestination }) => {
+  const [veterinaries, setVeterinaries] = useState([]);
 
   useEffect(() => {
-    startLocationUpdates();
-    return () => {
-      clearInterval(intervalRef.current);
-    };
+    fetchVeterinaries();
   }, []);
 
-  const startLocationUpdates = () => {
-    intervalRef.current = setInterval(() => {
-      getLocation();
-    }, 1000);
+  const fetchVeterinaries = async () => {
+    try {
+      const response = await axios.get('https://tu-api-url/veterinaries');
+      setVeterinaries(response.data);
+    } catch (error) {
+      Alert.alert('Error al cargar las ubicaciones de las veterinarias:', error.message);
+    }
   };
 
-  const getLocation = () => {
-    Geolocation.getCurrentPosition(
-      (position) => {
-        const current = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-        setLocation(current);
-      },
-      (error) => {
-        Alert.alert('Error al obtener la ubicación:', error.message);
-      },
-     /*  {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 1000,
-      } */
-    );
+  const handleMarkerPress = (coordinate) => {
+    setSelectedDestination(coordinate);
   };
 
   return (
@@ -65,19 +40,30 @@ const MapComponent = () => {
         <Marker
           coordinate={location}
           title="Tú estás aquí"
-          onDragEnd={(e) => setLocation(e.nativeEvent.coordinate)}
         />
-        <Marker
-          coordinate={destination}
-          title="Lugar de destino"
-        />
-        <MapViewDirections
-          origin={location}
-          destination={destination}
-          apikey={GOOGLE_MAPS_APIKEY}
-          strokeWidth={5}
-          strokeColor="brown"
-        />
+        {veterinaries.map((veterinary, index) => (
+          <Marker
+            key={index}
+            coordinate={{
+              latitude: veterinary.latitude,
+              longitude: veterinary.longitude,
+            }}
+            title={veterinary.name}
+            onPress={() => handleMarkerPress({
+              latitude: veterinary.latitude,
+              longitude: veterinary.longitude,
+            })}
+          />
+        ))}
+        {selectedDestination && (
+          <MapViewDirections
+            origin={location}
+            destination={selectedDestination}
+            apikey={GOOGLE_MAPS_APIKEY}
+            strokeWidth={5}
+            strokeColor="brown"
+          />
+        )}
       </MapView>
     </View>
   );

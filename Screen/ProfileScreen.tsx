@@ -23,11 +23,11 @@ const ProfileScreen = () => {
                     Alert.alert('Error', 'No se encontró el access token.');
                     return;
                 }
-    
+
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://53eb-157-100-143-78.ngrok-free.app/user/${accessToken}`, { headers });
+                const response = await axios.get(`https://2ff2-157-100-134-104.ngrok-free.app/users/${accessToken}`, { headers });
                 console.log('Response from API:', response.data);
                 
                 const { firstName, lastName, email, phoneNumber, password } = response.data; // Ajusta esto según la estructura de la respuesta de tu API
@@ -37,10 +37,9 @@ const ProfileScreen = () => {
                 Alert.alert('Error', 'No se pudo obtener la información del usuario.');
             }
         };
-    
+
         fetchUserData();
     }, []);
-    
 
     const handleUpdate = async () => {
         const { firstName, lastName, phoneNumber, password } = userData;
@@ -61,7 +60,7 @@ const ProfileScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.put(`https://53eb-157-100-143-78.ngrok-free.app/user`, updatedUserData, { headers });
+            await axios.put(`https://53eb-157-100-143-78.ngrok-free.app/users`, updatedUserData, { headers });
             Alert.alert('Actualización exitosa', 'La información del usuario ha sido actualizada.');
         } catch (error) {
             console.error(error);

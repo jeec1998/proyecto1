@@ -1,4 +1,4 @@
-import React, { useState,  } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -14,12 +14,13 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     const loginData = { email, password };
     try {
-      const response = await axios.post('https://f130-157-100-143-78.ngrok-free.app/auth/login', loginData);
-    
-      console.log('Respuesta del servidor:', response.data); 
-      const accessToken = response.data.data.accessToken; 
-      
+      const response = await axios.post(`https://2ff2-157-100-134-104.ngrok-free.app/auth/login`, loginData);
+
+      console.log('Respuesta del servidor:', response.data);
+      const accessToken = response.data.data.accessToken;
+
       if (accessToken) {
+        await AsyncStorage.setItem('accessToken', accessToken); // Guarda el token en AsyncStorage
         Alert.alert('Login exitoso', 'Bienvenido');
         navigation.navigate('First');
       } else {
@@ -32,8 +33,7 @@ const LoginScreen = () => {
       }
       Alert.alert('Error de inicio de sesión', 'Credenciales incorrectas. Por favor, inténtalo de nuevo.');
     }
-    
-  }    
+  };
 
   const gotoFirstScreen = () => {
     navigation.navigate('First');
