@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import { GOOGLE_MAPS_APIKEY } from '@env';
+import { GOOGLE_MAPS_APIKEY, API_URL } from '@env';
 import axios from 'axios';
 
 const MapComponent = ({ location, selectedDestination, setSelectedDestination }) => {
@@ -14,7 +14,7 @@ const MapComponent = ({ location, selectedDestination, setSelectedDestination })
 
   const fetchVeterinaries = async () => {
     try {
-      const response = await axios.get('https://tu-api-url/veterinaries');
+      const response = await axios.get(`${API_URL}/veterinaria`);
       setVeterinaries(response.data);
     } catch (error) {
       Alert.alert('Error al cargar las ubicaciones de las veterinarias:', error.message);
@@ -48,7 +48,8 @@ const MapComponent = ({ location, selectedDestination, setSelectedDestination })
               latitude: veterinary.latitude,
               longitude: veterinary.longitude,
             }}
-            title={veterinary.name}
+            title={veterinary.veterinaryName}
+            description={veterinary.description}
             onPress={() => handleMarkerPress({
               latitude: veterinary.latitude,
               longitude: veterinary.longitude,

@@ -14,7 +14,7 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     const loginData = { email, password };
     try {
-      const response = await axios.post(`https://2ff2-157-100-134-104.ngrok-free.app/auth/login`, loginData);
+      const response = await axios.post(`${API_URL}/auth/login`, loginData);
 
       console.log('Respuesta del servidor:', response.data);
       const accessToken = response.data.data.accessToken;
