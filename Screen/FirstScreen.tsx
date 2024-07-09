@@ -3,6 +3,9 @@ import { StyleSheet, View, TextInput, TouchableOpacity, Text, Modal, Alert, Perm
 import MapComponent from './MapComponent';
 import { useNavigation } from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '@env';
 
 const FirstScreen = () => {
   const [search, setSearch] = useState('');
@@ -12,10 +15,32 @@ const FirstScreen = () => {
     longitude: -78.6546,
   });
   const [selectedDestination, setSelectedDestination] = useState(null);
+  const [veterinaries, setVeterinaries] = useState([]);
   const navigation = useNavigation();
 
   useEffect(() => {
     requestLocationPermission();
+    fetchVeterinaries();
+    const locationWatcher = Geolocation.watchPosition(
+      (position) => {
+        const current = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+        setLocation(current);
+      },
+      (error) => {
+        Alert.alert('Error al obtener la ubicación:', error.message);
+      },
+      {
+        enableHighAccuracy: true,
+        distanceFilter: 10,
+      }
+    );
+
+    return () => {
+      Geolocation.clearWatch(locationWatcher);
+    };
   }, []);
 
   const requestLocationPermission = async () => {
@@ -33,37 +58,36 @@ const FirstScreen = () => {
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           console.log("Permiso de ubicación concedido");
-          getLocation();
         } else {
           console.log("Permiso de ubicación denegado");
         }
       } catch (err) {
         console.warn(err);
       }
-    } else {
-      getLocation();
     }
   };
 
-  const getLocation = () => {
-    Geolocation.getCurrentPosition(
-      (position) => {
-        const current = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-        setLocation(current);
-      },
-      (error) => {
-        Alert.alert('Error al obtener la ubicación:', error.message);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 30000,
-        maximumAge: 1000,
+  const fetchVeterinaries = async () => {
+    try {
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (!accessToken) {
+        Alert.alert('Error', 'No se encontró el access token.');
+        return;
       }
-    );
+
+      const headers = {
+        Authorization: `Bearer ${accessToken}`
+      };
+      const response = await axios.get(`${API_URL}/veterinaria`, { headers });
+      setVeterinaries(response.data);
+    } catch (error) {
+      Alert.alert('Error al cargar las ubicaciones de las veterinarias:', error.message);
+    }
   };
+
+  const filteredVeterinaries = veterinaries.filter(vet =>
+    vet.veterinaryName.toLowerCase().includes(search.toLowerCase())
+  );
 
   const goToProfileScreen = () => {
     navigation.navigate('Profile');
@@ -76,17 +100,19 @@ const FirstScreen = () => {
   const goToVeterinarysScreen = () => {
     navigation.navigate('VeterinarysScreen');
   };
+  const goToFavScreen = () => {
+    navigation.navigate('FavScreen');
+  }
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
 
-  const navigateToDestination = async () => {
-    const hasPermission = await requestLocationPermission();
-    if (hasPermission) {
-      getLocation(); // Obtener la ubicación actual antes de navegar
+  const navigateToDestination = () => {
+    if (selectedDestination) {
+      Alert.alert('Destino seleccionado', `Latitud: ${selectedDestination.latitude}, Longitud: ${selectedDestination.longitude}`);
     } else {
-      Alert.alert('Permiso denegado', 'No se puede obtener la ubicación sin permisos');
+      Alert.alert('Error', 'Por favor selecciona un destino');
     }
   };
 
@@ -105,7 +131,12 @@ const FirstScreen = () => {
         />
       </View>
 
-      <MapComponent location={location} selectedDestination={selectedDestination} setSelectedDestination={setSelectedDestination} />
+      <MapComponent 
+        location={location} 
+        selectedDestination={selectedDestination} 
+        setSelectedDestination={setSelectedDestination} 
+        veterinaries={filteredVeterinaries} 
+      />
 
       <Modal
         animationType="slide"
@@ -122,7 +153,7 @@ const FirstScreen = () => {
               <TouchableOpacity onPress={goToVeterinarysScreen}>
                 <Text style={styles.menuItem}>Veterinarias</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={toggleMenu}>
+              <TouchableOpacity onPress={goToFavScreen}>
                 <Text style={styles.menuItem}>Favoritas</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={toggleMenu}>

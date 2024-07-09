@@ -1,26 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import React from 'react';
+import { StyleSheet, View, Text } from 'react-native';
+import MapView, { PROVIDER_GOOGLE, Marker, Callout } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import { GOOGLE_MAPS_APIKEY, API_URL } from '@env';
-import axios from 'axios';
+import Assets from './Assets'; // Ajusta la ruta según tu estructura de proyecto
+import {GOOGLE_MAPS_APIKEY} from '@env'
 
-const MapComponent = ({ location, selectedDestination, setSelectedDestination }) => {
-  const [veterinaries, setVeterinaries] = useState([]);
-
-  useEffect(() => {
-    fetchVeterinaries();
-  }, []);
-
-  const fetchVeterinaries = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/veterinaria`);
-      setVeterinaries(response.data);
-    } catch (error) {
-      Alert.alert('Error al cargar las ubicaciones de las veterinarias:', error.message);
-    }
-  };
-
+const MapComponent = ({ location, selectedDestination, setSelectedDestination, veterinaries }) => {
   const handleMarkerPress = (coordinate) => {
     setSelectedDestination(coordinate);
   };
@@ -54,7 +39,18 @@ const MapComponent = ({ location, selectedDestination, setSelectedDestination })
               latitude: veterinary.latitude,
               longitude: veterinary.longitude,
             })}
-          />
+            icon={Assets.patitaback} // Usando la imagen del marcador
+          >
+            <Callout onPress={() => handleMarkerPress({
+              latitude: veterinary.latitude,
+              longitude: veterinary.longitude,
+            })}>
+              <View style={styles.calloutContainer}>
+                <Text style={styles.calloutTitle}>{veterinary.veterinaryName}</Text>
+                <Text style={styles.calloutDescription}>{veterinary.description}</Text>
+              </View>
+            </Callout>
+          </Marker>
         ))}
         {selectedDestination && (
           <MapViewDirections
@@ -77,6 +73,22 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%',
+  },
+  calloutContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: 150,
+    padding: 10,
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
+  calloutTitle: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  calloutDescription: {
+    marginBottom: 10,
+    textAlign: 'center',
   },
 });
 

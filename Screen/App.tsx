@@ -9,10 +9,8 @@ import FirstScreen from './FirstScreen';
 import ProfileScreen from './ProfileScreen';
 import ModVeterinary from './ModoVeterinaria';
 import VeterinarysScreen from './VeterinarysScreen';
+import FavScreen from './FavScreen';
 
-/* import FavoriteVets from './FavoriteVets';
-import Vets from './Veterinary';
- */
 const Stack = createStackNavigator();
 
 function App() {
@@ -26,8 +24,7 @@ function App() {
         <Stack.Screen name='Profile' component={ProfileScreen}/>
         <Stack.Screen name='ModVeterinary' component={ModVeterinary}/>
         <Stack.Screen name='VeterinarysScreen' component={VeterinarysScreen}/>
-       {/*  <Stack.Screen name='FavoriteVets' component={FavoriteVets}/>
-        <Stack.Screen name='Vets' component={Vets}/> */}
+        <Stack.Screen name='FavScreen' component={FavScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
