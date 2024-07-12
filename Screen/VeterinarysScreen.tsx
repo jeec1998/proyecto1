@@ -21,7 +21,7 @@ const VeterinarysScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`${API_URL}/veterinaria`, { headers });
+                const response = await axios.get(`https://d6a0-170-238-1-36.ngrok-free.app/veterinaria`, { headers });
                 console.log('Response from API:', response.data);
 
                 // Suponiendo que la respuesta es un array de veterinarias

@@ -50,7 +50,7 @@ const ModVeterinary = () => {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/veterinaria`, formData, {
+      const response = await axios.post(`https://d6a0-170-238-1-36.ngrok-free.app/veterinaria`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

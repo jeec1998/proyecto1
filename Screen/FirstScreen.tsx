@@ -16,11 +16,13 @@ const FirstScreen = () => {
   });
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [veterinaries, setVeterinaries] = useState([]);
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
     requestLocationPermission();
     fetchVeterinaries();
+    fetch2FAStatus();
     const locationWatcher = Geolocation.watchPosition(
       (position) => {
         const current = {
@@ -78,10 +80,47 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`${API_URL}/veterinaria`, { headers });
+      const response = await axios.get(`https://localhost:3000/veterinaria`, { headers });
       setVeterinaries(response.data);
     } catch (error) {
       Alert.alert('Error al cargar las ubicaciones de las veterinarias:', error.message);
+    }
+  };
+
+  const fetch2FAStatus = async () => {
+    try {
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (!accessToken) {
+        Alert.alert('Error', 'No se encontró el access token.');
+        return;
+      }
+
+      const headers = {
+        Authorization: `Bearer ${accessToken}`
+      };
+      const response = await axios.get(`https://d6a0-170-238-1-36.ngrok-free.app/2fa/generate`, { headers });
+      setIs2FAEnabled(response.data.is2FAEnabled);
+    } catch (error) {
+      Alert.alert('Error al obtener el estado del 2FA:', error.message);
+    }
+  };
+
+  const toggle2FA = async () => {
+    try {
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (!accessToken) {
+        Alert.alert('Error', 'No se encontró el access token.');
+        return;
+      }
+
+      const headers = {
+        Authorization: `Bearer ${accessToken}`
+      };
+      const response = await axios.post(`https://localhost:3000/2fa/enable`, {}, { headers });
+      setIs2FAEnabled(response.data.is2FAEnabled);
+      Alert.alert('Éxito', `Doble factor de autenticación ${response.data.is2FAEnabled ? 'activado' : 'desactivado'}`);
+    } catch (error) {
+      Alert.alert('Error al cambiar el estado del 2FA:', error.message);
     }
   };
 
@@ -100,9 +139,10 @@ const FirstScreen = () => {
   const goToVeterinarysScreen = () => {
     navigation.navigate('VeterinarysScreen');
   };
+
   const goToFavScreen = () => {
     navigation.navigate('FavScreen');
-  }
+  };
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -131,11 +171,11 @@ const FirstScreen = () => {
         />
       </View>
 
-      <MapComponent 
-        location={location} 
-        selectedDestination={selectedDestination} 
-        setSelectedDestination={setSelectedDestination} 
-        veterinaries={filteredVeterinaries} 
+      <MapComponent
+        location={location}
+        selectedDestination={selectedDestination}
+        setSelectedDestination={setSelectedDestination}
+        veterinaries={filteredVeterinaries}
       />
 
       <Modal
@@ -156,11 +196,8 @@ const FirstScreen = () => {
               <TouchableOpacity onPress={goToFavScreen}>
                 <Text style={styles.menuItem}>Favoritas</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={toggleMenu}>
-                <Text style={styles.menuItem}>Top 5</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={toggleMenu}>
-                <Text style={styles.menuItem}>VET-IA</Text>
+              <TouchableOpacity onPress={toggle2FA}>
+                <Text style={styles.menuItem}>{is2FAEnabled ? 'Desactivar' : 'Activar'} 2FA</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToModVeterinary}>

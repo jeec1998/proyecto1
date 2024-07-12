@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Image } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Assets from './Assets'; // Ajusta la ruta según tu estructura de proyecto
-import {GOOGLE_MAPS_APIKEY} from '@env'
+import { GOOGLE_MAPS_APIKEY } from '@env';
 
 const MapComponent = ({ location, selectedDestination, setSelectedDestination, veterinaries }) => {
   const handleMarkerPress = (coordinate) => {
@@ -39,7 +39,7 @@ const MapComponent = ({ location, selectedDestination, setSelectedDestination, v
               latitude: veterinary.latitude,
               longitude: veterinary.longitude,
             })}
-            icon={Assets.patitaback} // Usando la imagen del marcador
+            icon={Assets.patitaback} // Ajusta esta ruta según tu estructura de proyecto
           >
             <Callout onPress={() => handleMarkerPress({
               latitude: veterinary.latitude,

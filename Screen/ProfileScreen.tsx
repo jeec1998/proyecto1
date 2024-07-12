@@ -10,8 +10,7 @@ const ProfileScreen = () => {
         firstName: '',
         lastName: '',
         email: '',
-        phoneNumber: '',
-        password: ''
+        phoneNumber: ''
     });
     const navigation = useNavigation();
 
@@ -27,13 +26,13 @@ const ProfileScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://2ff2-157-100-134-104.ngrok-free.app/users/${accessToken}`, { headers });
+                const response = await axios.get('https://d6a0-170-238-1-36.ngrok-free.app/user', { headers });
                 console.log('Response from API:', response.data);
-                
-                const { firstName, lastName, email, phoneNumber, password } = response.data; // Ajusta esto según la estructura de la respuesta de tu API
-                setUserData({ firstName, lastName, email, phoneNumber, password });
+
+                const { firstName, lastName, email, phoneNumber } = response.data;
+                setUserData({ firstName, lastName, email, phoneNumber });
             } catch (error) {
-                console.error(error);
+                console.error('Error fetching user data:', error);
                 Alert.alert('Error', 'No se pudo obtener la información del usuario.');
             }
         };
@@ -42,12 +41,11 @@ const ProfileScreen = () => {
     }, []);
 
     const handleUpdate = async () => {
-        const { firstName, lastName, phoneNumber, password } = userData;
+        const { firstName, lastName, phoneNumber } = userData;
         const updatedUserData = {
             firstName,
             lastName,
-            phoneNumber,
-            password
+            phoneNumber
         };
 
         try {
@@ -60,12 +58,16 @@ const ProfileScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.put(`https://53eb-157-100-143-78.ngrok-free.app/users`, updatedUserData, { headers });
+            await axios.put('https://d6a0-170-238-1-36.ngrok-free.app/user', updatedUserData, { headers });
             Alert.alert('Actualización exitosa', 'La información del usuario ha sido actualizada.');
         } catch (error) {
-            console.error(error);
+            console.error('Error updating user data:', error);
             Alert.alert('Error de actualización', 'Hubo un problema al actualizar la información del usuario.');
         }
+    };
+
+    const handleChangePassword = () => {
+        navigation.navigate('ChangePasswordScreen');
     };
 
     return (
@@ -76,36 +78,32 @@ const ProfileScreen = () => {
             <Text style={styles.header}>Información del Cliente</Text>
             <View style={styles.formContainer}>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, styles.textBlack]}
                     placeholder="Nombre"
                     value={userData.firstName}
                     onChangeText={(value) => setUserData({ ...userData, firstName: value })}
                 />
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, styles.textBlack]}
                     placeholder="Apellido"
                     value={userData.lastName}
                     onChangeText={(value) => setUserData({ ...userData, lastName: value })}
                 />
                 <TextInput
-                    style={[styles.input, { backgroundColor: '#e0e0e0' }]}
+                    style={[styles.input, { backgroundColor: '#e0e0e0' }, styles.textBlack]}
                     placeholder="Correo Electrónico"
                     value={userData.email}
                     editable={false}
                 />
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, styles.textBlack]}
                     placeholder="Número de Teléfono"
                     value={userData.phoneNumber}
                     onChangeText={(value) => setUserData({ ...userData, phoneNumber: value })}
                 />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Contraseña"
-                    value={userData.password}
-                    onChangeText={(value) => setUserData({ ...userData, password: value })}
-                    secureTextEntry
-                />
+                <TouchableOpacity style={styles.button} onPress={handleChangePassword}>
+                    <Text style={styles.buttonText}>Cambiar Contraseña</Text>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={handleUpdate}>
                     <Text style={styles.buttonText}>Actualizar</Text>
                 </TouchableOpacity>
@@ -140,17 +138,21 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 40,
-        borderColor: 'gray',
+        borderColor: 'black',
         borderWidth: 1,
         borderRadius: 8,
         marginBottom: 10,
         paddingHorizontal: 10,
+    },
+    textBlack: {
+        color: 'black',
     },
     button: {
         backgroundColor: '#573321',
         paddingVertical: 12,
         borderRadius: 8,
         alignItems: 'center',
+        marginVertical: 10,
     },
     buttonText: {
         color: '#fff',

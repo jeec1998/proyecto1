@@ -13,7 +13,7 @@ const VeterinaryScreen = () => {
   /*   useEffect(() => {
         const fetchVetInfo = async () => {
             try {
-                const response = await axios.get(`${API_URL}/veterinary`);
+                const response = await axios.get(`https://7118-170-238-1-36.ngrok-free.app bb-2800-bf0-2401-1128-996c-18a1-e2d-428d.ngrok-free.app/veterinary`);
                 const { name, image, description } = response.data;
                 setVetName(name);
                 setVetImage(image); // Asumiendo que 'image' es la URL de la imagen
