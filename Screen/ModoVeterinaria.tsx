@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Image, Scro
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import DocumentPicker from 'react-native-document-picker';
+import MaskInput from 'react-native-mask-input';
 import Assets from './Assets';
 import { API_URL } from '@env';
 
@@ -56,7 +57,7 @@ const ModVeterinary = () => {
     formData.append('description', description);
     formData.append('latitude', latitude);
     formData.append('longitude', longitude);
-    formData.append('veterinaryContactNumber', veterinaryContactNumber);
+    formData.append('veterinaryContactNumber', `+593${veterinaryContactNumber}`); // Agrega el código de país
 
     if (image) {
       formData.append('image', {
@@ -75,7 +76,7 @@ const ModVeterinary = () => {
     }
 
     try {
-      const response = await axios.post(`https://f86a-170-238-1-36.ngrok-free.app /veterinaria`, formData, {
+      const response = await axios.post(`https://f86a-170-238-1-36.ngrok-free.app/veterinaria`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -121,14 +122,20 @@ const ModVeterinary = () => {
             value={description}
             onChangeText={setDescription}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Número de Contacto de la Veterinaria"
-            placeholderTextColor="#ccc"
-            value={veterinaryContactNumber}
-            onChangeText={setVeterinaryContactNumber}
-            keyboardType="phone-pad"
-          />
+          <View style={styles.phoneContainer}>
+            <Text style={styles.phonePrefix}>+593</Text>
+            <MaskInput
+              style={styles.phoneInput}
+              placeholder="Número de Contacto"
+              placeholderTextColor="#ccc"
+              value={veterinaryContactNumber}
+              onChangeText={(masked, unmasked) => {
+                setVeterinaryContactNumber(unmasked);
+              }}
+              mask={[/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+              keyboardType="phone-pad"
+            />
+          </View>
           {!certificatePdf ? (
             <TouchableOpacity style={styles.button} onPress={selectFile}>
               <Text style={styles.buttonText}>Seleccionar PDF</Text>
@@ -242,8 +249,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
   },
-  smallInput: {
-    flex: 1,
+  phoneContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
     height: 50,
     backgroundColor: '#fff',
     borderRadius: 8,
@@ -251,7 +260,41 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     fontSize: 16,
     color: '#000',
-    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  phonePrefix: {
+    fontSize: 16,
+    color: '#000',
+  },
+  phoneInput: {
+    flex: 1,
+    height: '100%',
+    fontSize: 16,
+    color: '#000',
+    marginLeft: 5,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    borderWidth: 1,
+    backgroundColor: '#fff',
+    borderColor: '#000',
+    borderRadius: 8,
+    marginVertical: 10,
+    paddingHorizontal: 10,
+  },
+  passwordInput: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    color: '#000',
+  },
+  showPasswordText: {
+    marginLeft: 10,
+    color: '#000',
+    fontSize: 16,
   },
   button: {
     backgroundColor: '#573321',
@@ -271,6 +314,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginVertical: 10,
+  },
+  smallInput: {
+    flex: 1,
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    fontSize: 16,
+    color: '#000',
+    marginRight: 10,
   },
   smallButton: {
     backgroundColor: '#573321',

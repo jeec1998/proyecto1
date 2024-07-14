@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, Alert, Linking } from 'react-native';
 
 const VeterinaryDetailScreen = ({ route, navigation }) => {
     const { vet } = route.params;
@@ -9,7 +9,37 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
     };
 
     const handleMessage = () => {
-        Alert.alert('Enviar Mensaje', 'Funcionalidad para enviar mensaje aún no implementada.');
+        if (!vet.phoneNumber) {
+            Alert.alert('Error', 'El número de teléfono no está disponible.');
+            return;
+        }
+
+        let phoneNumber = vet.phoneNumber.replace(/^0+/, ''); // Eliminar ceros iniciales
+        if (!phoneNumber.startsWith('593')) {
+            phoneNumber = `593${phoneNumber}`;
+        }
+        const url = `whatsapp://send?phone=${phoneNumber}`;
+
+        Linking.openURL(url).catch(() => {
+            Alert.alert('Error', 'No se pudo abrir WhatsApp. Asegúrate de tener WhatsApp instalado.');
+        });
+    };
+
+    const handleCall = () => {
+        if (!vet.phoneNumber) {
+            Alert.alert('Error', 'El número de teléfono no está disponible.');
+            return;
+        }
+
+        let phoneNumber = vet.phoneNumber.replace(/^0+/, ''); // Eliminar ceros iniciales
+        if (!phoneNumber.startsWith('593')) {
+            phoneNumber = `593${phoneNumber}`;
+        }
+        const url = `tel:${phoneNumber}`;
+
+        Linking.openURL(url).catch(() => {
+            Alert.alert('Error', 'No se pudo realizar la llamada.');
+        });
     };
 
     const handleNavigate = () => {
@@ -39,6 +69,9 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.smallButton} onPress={handleMessage}>
                     <Text style={styles.buttonText}>Chat</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.smallButton} onPress={handleCall}>
+                    <Text style={styles.buttonText}>Llamar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.smallButton} onPress={handleNavigate}>
                     <Text style={styles.buttonText}>IR</Text>

@@ -12,6 +12,7 @@ import VeterinarysScreen from './VeterinarysScreen';
 import FavScreen from './FavScreen';
 import SelectLocationScreen from './SlecetLocationScreen';
 import VeterinaryDetailScreen from './VetarinaryDetailsScreen';
+import ChangePasswordScreen from './ChangePasswordScreen';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,7 @@ function App() {
         <Stack.Screen name='FavScreen' component={FavScreen} />
         <Stack.Screen name="SelectLocation" component={SelectLocationScreen} />
         <Stack.Screen name="VeterinaryDetailScreen" component={VeterinaryDetailScreen} />
+        <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

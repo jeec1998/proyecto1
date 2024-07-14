@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import Assets from './Assets';
 import { API_URL } from '@env';
-import App from './App';
+import MaskInput from 'react-native-mask-input';
 
 const RegisterScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -16,7 +16,7 @@ const RegisterScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigation = useNavigation();
-  const apiUrl = process.env.API_URL; 
+  const apiUrl = process.env.API_URL;
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
@@ -28,7 +28,7 @@ const RegisterScreen = () => {
       firstName,
       lastName,
       email,
-      phoneNumber,
+      phoneNumber: `+593${phoneNumber}`, // Agrega el código de país
       password,
     };
 
@@ -39,13 +39,6 @@ const RegisterScreen = () => {
     } catch (error) {
       console.error(error);
       Alert.alert('Error de registro', 'Hubo un problema al registrar el usuario. Por favor, inténtalo de nuevo.');
-    }
-  };
-
-  const handlePhoneNumberChange = (text) => {
-    const formattedText = text.replace(/[^0-9]/g, '');
-    if (formattedText.length <= 10) {
-      setPhoneNumber(formattedText);
     }
   };
 
@@ -87,14 +80,20 @@ const RegisterScreen = () => {
             keyboardType="email-address"
             autoCapitalize="none"
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Número de Teléfono"
-            placeholderTextColor="#ccc"
-            value={phoneNumber}
-            onChangeText={handlePhoneNumberChange}
-            keyboardType="phone-pad"
-          />
+          <View style={styles.phoneContainer}>
+            <Text style={styles.phonePrefix}>+593</Text>
+            <MaskInput
+              style={styles.phoneInput}
+              placeholder="Número de Teléfono"
+              placeholderTextColor="#ccc"
+              value={phoneNumber}
+              onChangeText={(masked, unmasked) => {
+                setPhoneNumber(unmasked);
+              }}
+              mask={[/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+              keyboardType="phone-pad"
+            />
+          </View>
           <View style={styles.passwordContainer}>
             <TextInput
               style={styles.passwordInput}
@@ -169,6 +168,31 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     fontSize: 16,
     color: '#000',
+  },
+  phoneContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    fontSize: 16,
+    color: '#000',
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  phonePrefix: {
+    fontSize: 16,
+    color: '#000',
+  },
+  phoneInput: {
+    flex: 1,
+    height: '100%',
+    fontSize: 16,
+    color: '#000',
+    marginLeft: 5,
   },
   passwordContainer: {
     flexDirection: 'row',
