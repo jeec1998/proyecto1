@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = () => {
     const [userData, setUserData] = useState({
+        userId: '',
         firstName: '',
         lastName: '',
         email: '',
@@ -26,11 +27,11 @@ const ProfileScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://d6a0-170-238-1-36.ngrok-free.app/user', { headers });
+                const response = await axios.get('https://f86a-170-238-1-36.ngrok-free.app/user', { headers });
                 console.log('Response from API:', response.data);
 
-                const { firstName, lastName, email, phoneNumber } = response.data;
-                setUserData({ firstName, lastName, email, phoneNumber });
+                const { _id, firstName, lastName, email, phoneNumber } = response.data;
+                setUserData({ userId: _id, firstName, lastName, email, phoneNumber });
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 Alert.alert('Error', 'No se pudo obtener la información del usuario.');
@@ -41,7 +42,7 @@ const ProfileScreen = () => {
     }, []);
 
     const handleUpdate = async () => {
-        const { firstName, lastName, phoneNumber } = userData;
+        const { userId, firstName, lastName, phoneNumber } = userData;
         const updatedUserData = {
             firstName,
             lastName,
@@ -58,7 +59,7 @@ const ProfileScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.put('https://d6a0-170-238-1-36.ngrok-free.app/user', updatedUserData, { headers });
+            await axios.patch('https://f86a-170-238-1-36.ngrok-free.app/user', updatedUserData, { headers });
             Alert.alert('Actualización exitosa', 'La información del usuario ha sido actualizada.');
         } catch (error) {
             console.error('Error updating user data:', error);
@@ -77,6 +78,7 @@ const ProfileScreen = () => {
             </View>
             <Text style={styles.header}>Información del Cliente</Text>
             <View style={styles.formContainer}>
+                <Text style={styles.label}>ID del Usuario: {userData.userId}</Text>
                 <TextInput
                     style={[styles.input, styles.textBlack]}
                     placeholder="Nombre"
@@ -158,6 +160,10 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    label: {
+        fontSize: 16,
+        marginBottom: 10,
     },
 });
 

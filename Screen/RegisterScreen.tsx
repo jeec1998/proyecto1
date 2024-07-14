@@ -33,12 +33,19 @@ const RegisterScreen = () => {
     };
 
     try {
-      const response = await axios.post(`https://d6a0-170-238-1-36.ngrok-free.app/auth/register`, userData);
+      const response = await axios.post(`https://f86a-170-238-1-36.ngrok-free.app/auth/register`, userData);
       Alert.alert('Registro exitoso');
       navigation.navigate('Login');
     } catch (error) {
       console.error(error);
       Alert.alert('Error de registro', 'Hubo un problema al registrar el usuario. Por favor, inténtalo de nuevo.');
+    }
+  };
+
+  const handlePhoneNumberChange = (text) => {
+    const formattedText = text.replace(/[^0-9]/g, '');
+    if (formattedText.length <= 10) {
+      setPhoneNumber(formattedText);
     }
   };
 
@@ -85,7 +92,7 @@ const RegisterScreen = () => {
             placeholder="Número de Teléfono"
             placeholderTextColor="#ccc"
             value={phoneNumber}
-            onChangeText={setPhoneNumber}
+            onChangeText={handlePhoneNumberChange}
             keyboardType="phone-pad"
           />
           <View style={styles.passwordContainer}>

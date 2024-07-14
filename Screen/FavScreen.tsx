@@ -24,7 +24,7 @@ const FavScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://d6a0-170-238-1-36.ngrok-free.app/vet`, { headers });
+                const response = await axios.get(`https://f86a-170-238-1-36.ngrok-free.app/vet`, { headers });
                 console.log('Response from API:', response.data);
 
                 setFavoriteVets(response.data.favoriteVets); // Suponiendo que response.data tiene una propiedad favoriteVets que es un array de veterinarias favoritas
@@ -48,7 +48,7 @@ const FavScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.put(`https://7118-170-238-1-36.ngrok-free.app eb-157-100-143-78.ngrok-free.app/vet`, { favoriteVets }, { headers });
+            await axios.put(`https://f86a-170-238-1-36.ngrok-free.app/vet`, { favoriteVets }, { headers });
             Alert.alert('Actualización exitosa', 'La información de las veterinarias favoritas ha sido actualizada.');
         } catch (error) {
             console.error(error);

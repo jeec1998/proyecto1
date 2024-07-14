@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert, ScrollView } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert, ScrollView, Image } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '@env';
 
 const VeterinarysScreen = () => {
     const [vetData, setVetData] = useState([]);
@@ -21,10 +20,9 @@ const VeterinarysScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://d6a0-170-238-1-36.ngrok-free.app/veterinaria`, { headers });
+                const response = await axios.get('https://f86a-170-238-1-36.ngrok-free.app/veterinaria', { headers });
                 console.log('Response from API:', response.data);
 
-                // Suponiendo que la respuesta es un array de veterinarias
                 setVetData(response.data);
             } catch (error) {
                 console.error(error);
@@ -47,45 +45,26 @@ const VeterinarysScreen = () => {
         navigation.navigate('FirstScreen'); 
     };
 
+    const handleVetDetail = (vet) => {
+        navigation.navigate('VeterinaryDetailScreen', { vet });
+    };
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             {vetData.map((vet, index) => (
                 <View key={index} style={styles.vetContainer}>
-                    <TextInput
-                        style={styles.nameInput}
-                        placeholder="Nombre de la Veterinaria"
-                        placeholderTextColor="gray"
-                        value={vet.veterinaryName}
-                        onChangeText={(value) => {
-                            const newVetData = [...vetData];
-                            newVetData[index].veterinaryName = value;
-                            setVetData(newVetData);
-                        }}
-                        editable={false}
-                    />
-                    <TextInput
-                        style={styles.descriptionInput}
-                        placeholder="Descripción"
-                        placeholderTextColor="gray"
-                        value={vet.description}
-                        onChangeText={(value) => {
-                            const newVetData = [...vetData];
-                            newVetData[index].description = value;
-                            setVetData(newVetData);
-                        }}
-                        multiline
-                    />
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.smallButton} onPress={handleRate}>
-                            <Text style={styles.buttonText}>Calificar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButton} onPress={handleMessage}>
-                            <Text style={styles.buttonText}>Chat</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.smallButton} onPress={handleNavigate}>
-                            <Text style={styles.buttonText}>IR</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity onPress={() => handleVetDetail(vet)}>
+                        <Text style={styles.name}>{vet.veterinaryName}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleVetDetail(vet)}>
+                        {vet.imagVet && (
+                            <Image 
+                                source={{ uri: vet.imagVet }} 
+                                style={styles.vetImage} 
+                            />
+                        )}
+                    </TouchableOpacity>
+                  
                     {index < vetData.length - 1 && <View style={styles.separator} />}
                 </View>
             ))}
@@ -96,7 +75,7 @@ const VeterinarysScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#F1D47B',
         padding: 20,
         alignItems: 'center',
     },
@@ -104,13 +83,19 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         width: '100%',
     },
-    nameInput: {
-        width: '100%',
-        textAlign: 'center',
-        fontSize: 18,
+    name: {
+        fontSize: 24,
+        fontWeight: 'bold',
         marginBottom: 10,
-        color: 'black', // Asegura que el texto sea de color negro
-        borderWidth: 0, // Quita el borde
+        fontStyle: 'italic', // Aplica el estilo cursiva
+        color: '#573321', // Aplica un color específico
+        textAlign: 'center', // Centra el texto
+    },
+    vetImage: {
+        width: '100%',
+        height: 200,
+        resizeMode: 'cover',
+        marginBottom: 10,
     },
     descriptionInput: {
         width: '100%',

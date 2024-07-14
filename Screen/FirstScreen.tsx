@@ -80,7 +80,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://localhost:3000/veterinaria`, { headers });
+      const response = await axios.get(`https://f86a-170-238-1-36.ngrok-free.app/veterinaria`, { headers });
       setVeterinaries(response.data);
     } catch (error) {
       Alert.alert('Error al cargar las ubicaciones de las veterinarias:', error.message);
@@ -98,7 +98,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://d6a0-170-238-1-36.ngrok-free.app/2fa/generate`, { headers });
+      const response = await axios.get(`https://f86a-170-238-1-36.ngrok-free.app/2fa/generate`, { headers });
       setIs2FAEnabled(response.data.is2FAEnabled);
     } catch (error) {
       Alert.alert('Error al obtener el estado del 2FA:', error.message);
@@ -116,12 +116,17 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.post(`https://localhost:3000/2fa/enable`, {}, { headers });
+      const response = await axios.post(`https://f86a-170-238-1-36.ngrok-free.app/2fa/enable`, {}, { headers });
       setIs2FAEnabled(response.data.is2FAEnabled);
       Alert.alert('Éxito', `Doble factor de autenticación ${response.data.is2FAEnabled ? 'activado' : 'desactivado'}`);
     } catch (error) {
       Alert.alert('Error al cambiar el estado del 2FA:', error.message);
     }
+  };
+
+  const logout = async () => {
+    await AsyncStorage.removeItem('accessToken');
+    navigation.navigate('FirstScreen');
   };
 
   const filteredVeterinaries = veterinaries.filter(vet =>
@@ -143,7 +148,9 @@ const FirstScreen = () => {
   const goToFavScreen = () => {
     navigation.navigate('FavScreen');
   };
-
+  const goToLoginScreen = () => {
+    navigation.navigate('Login');
+  };
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
@@ -198,6 +205,9 @@ const FirstScreen = () => {
               </TouchableOpacity>
               <TouchableOpacity onPress={toggle2FA}>
                 <Text style={styles.menuItem}>{is2FAEnabled ? 'Desactivar' : 'Activar'} 2FA</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={goToLoginScreen} style={styles.logoutButton}>
+                <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToModVeterinary}>
@@ -265,6 +275,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: '#573321',
     color: 'black',
+  },
+  logoutButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#573321',
+    borderRadius: 10,
+  },
+  logoutButtonText: {
+    fontSize: 16,
+    color: '#fff',
   },
   modeVeterinariaButton: {
     backgroundColor: '#573321',

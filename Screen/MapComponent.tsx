@@ -1,13 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Assets from './Assets'; // Ajusta la ruta según tu estructura de proyecto
 import { GOOGLE_MAPS_APIKEY } from '@env';
 
 const MapComponent = ({ location, selectedDestination, setSelectedDestination, veterinaries }) => {
-  const handleMarkerPress = (coordinate) => {
-    setSelectedDestination(coordinate);
+  const handleMarkerPress = (veterinary) => {
+    setSelectedDestination(veterinary);
   };
 
   return (
@@ -33,21 +33,12 @@ const MapComponent = ({ location, selectedDestination, setSelectedDestination, v
               latitude: veterinary.latitude,
               longitude: veterinary.longitude,
             }}
-            title={veterinary.veterinaryName}
-            description={veterinary.description}
-            onPress={() => handleMarkerPress({
-              latitude: veterinary.latitude,
-              longitude: veterinary.longitude,
-            })}
             icon={Assets.patitaback} // Ajusta esta ruta según tu estructura de proyecto
+            onPress={() => handleMarkerPress(veterinary)}
           >
-            <Callout onPress={() => handleMarkerPress({
-              latitude: veterinary.latitude,
-              longitude: veterinary.longitude,
-            })}>
+            <Callout onPress={() => handleMarkerPress(veterinary)}>
               <View style={styles.calloutContainer}>
                 <Text style={styles.calloutTitle}>{veterinary.veterinaryName}</Text>
-                <Text style={styles.calloutDescription}>{veterinary.description}</Text>
               </View>
             </Callout>
           </Marker>
@@ -85,10 +76,6 @@ const styles = StyleSheet.create({
   calloutTitle: {
     fontWeight: 'bold',
     marginBottom: 5,
-  },
-  calloutDescription: {
-    marginBottom: 10,
-    textAlign: 'center',
   },
 });
 

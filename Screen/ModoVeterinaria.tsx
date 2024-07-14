@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text,TextInput, TouchableOpacity, Alert, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import DocumentPicker from 'react-native-document-picker'; // Import document picker
+import DocumentPicker from 'react-native-document-picker';
 import Assets from './Assets';
 import { API_URL } from '@env';
 
@@ -12,19 +12,18 @@ const ModVeterinary = () => {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [veterinaryContactNumber, setVeterinaryContactNumber] = useState('');
-  const [certificatePdf, setCertificatePdf] = useState(null); // State to hold the selected PDF file
+  const [certificatePdf, setCertificatePdf] = useState(null);
+  const [image, setImage] = useState(null);
   const navigation = useNavigation();
 
-  // Function to handle file selection
   const selectFile = async () => {
     try {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.pdf],
       });
-      setCertificatePdf(res); // Set the selected file
+      setCertificatePdf(res);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
-        // User cancelled the picker
         console.log('User cancelled the file picker.');
       } else {
         console.error('Error while picking the file:', err);
@@ -32,7 +31,25 @@ const ModVeterinary = () => {
     }
   };
 
-  // Function to handle form submission
+  const selectImage = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images],
+      });
+      if (res[0].type === 'image/jpeg' || res[0].type === 'image/png') {
+        setImage(res);
+      } else {
+        Alert.alert('Formato incorrecto', 'Solo se permiten imágenes JPG o PNG.');
+      }
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log('User cancelled the file picker.');
+      } else {
+        console.error('Error while picking the file:', err);
+      }
+    }
+  };
+
   const handleRegister = async () => {
     const formData = new FormData();
     formData.append('veterinaryName', veterinaryName);
@@ -40,17 +57,25 @@ const ModVeterinary = () => {
     formData.append('latitude', latitude);
     formData.append('longitude', longitude);
     formData.append('veterinaryContactNumber', veterinaryContactNumber);
-    
+
+    if (image) {
+      formData.append('image', {
+        uri: image[0].uri,
+        type: image[0].type,
+        name: image[0].name,
+      });
+    }
+
     if (certificatePdf) {
-        formData.append('certificatePdf', {
-            uri: certificatePdf.uri,
-            type: certificatePdf.type,
-            name: certificatePdf.name
-        });
+      formData.append('certificatePdf', {
+        uri: certificatePdf.uri,
+        type: certificatePdf.type,
+        name: certificatePdf.name,
+      });
     }
 
     try {
-      const response = await axios.post(`https://d6a0-170-238-1-36.ngrok-free.app/veterinaria`, formData, {
+      const response = await axios.post(`https://f86a-170-238-1-36.ngrok-free.app /veterinaria`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -64,6 +89,11 @@ const ModVeterinary = () => {
         'Hubo un problema al registrar la veterinaria. Por favor, inténtalo de nuevo.'
       );
     }
+  };
+
+  const setCoordinates = ({ latitude, longitude }) => {
+    setLatitude(latitude.toString());
+    setLongitude(longitude.toString());
   };
 
   return (
@@ -93,35 +123,75 @@ const ModVeterinary = () => {
           />
           <TextInput
             style={styles.input}
-            placeholder="Latitud"
-            placeholderTextColor="#ccc"
-            value={latitude}
-            onChangeText={setLatitude}
-            keyboardType="numeric"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Longitud"
-            placeholderTextColor="#ccc"
-            value={longitude}
-            onChangeText={setLongitude}
-            keyboardType="numeric"
-          />
-          <TextInput
-            style={styles.input}
             placeholder="Número de Contacto de la Veterinaria"
             placeholderTextColor="#ccc"
             value={veterinaryContactNumber}
             onChangeText={setVeterinaryContactNumber}
             keyboardType="phone-pad"
           />
-          {/* File picker button */}
-          <TouchableOpacity style={styles.button} onPress={selectFile}>
-            <Text style={styles.buttonText}>Seleccionar PDF</Text>
-          </TouchableOpacity>
-          {/* Display selected file name */}
-          {certificatePdf && (
-            <Text style={styles.selectedFile}>{certificatePdf.name}</Text>
+          {!certificatePdf ? (
+            <TouchableOpacity style={styles.button} onPress={selectFile}>
+              <Text style={styles.buttonText}>Seleccionar PDF</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.fileContainer}>
+              <TextInput
+                style={styles.smallInput}
+                placeholder="PDF Seleccionado"
+                placeholderTextColor="#ccc"
+                value={certificatePdf[0].name}
+                editable={false}
+              />
+              <TouchableOpacity onPress={selectFile} style={styles.smallButton}>
+                <Text style={styles.smallButtonText}>Actualizar</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {!image ? (
+            <TouchableOpacity style={styles.button} onPress={selectImage}>
+              <Text style={styles.buttonText}>Seleccionar Imagen</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.fileContainer}>
+              <TextInput
+                style={styles.smallInput}
+                placeholder="Imagen Seleccionada"
+                placeholderTextColor="#ccc"
+                value={image[0].name}
+                editable={false}
+              />
+              <TouchableOpacity onPress={selectImage} style={styles.smallButton}>
+                <Text style={styles.smallButtonText}>Actualizar</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {(!latitude || !longitude) ? (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('SelectLocation', { setCoordinates })}
+            >
+              <Text style={styles.buttonText}>Seleccionar Ubicación</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.fileContainer}>
+              <TextInput
+                style={styles.smallInput}
+                placeholder="Latitud"
+                placeholderTextColor="#ccc"
+                value={latitude}
+                editable={false}
+              />
+              <TextInput
+                style={styles.smallInput}
+                placeholder="Longitud"
+                placeholderTextColor="#ccc"
+                value={longitude}
+                editable={false}
+              />
+              <TouchableOpacity onPress={() => navigation.navigate('SelectLocation', { setCoordinates })} style={styles.smallButton}>
+                <Text style={styles.smallButtonText}>Actualizar</Text>
+              </TouchableOpacity>
+            </View>
           )}
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
             <Text style={styles.buttonText}>Registrarse</Text>
@@ -172,6 +242,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
   },
+  smallInput: {
+    flex: 1,
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    fontSize: 16,
+    color: '#000',
+    marginRight: 10,
+  },
   button: {
     backgroundColor: '#573321',
     padding: 16,
@@ -185,9 +266,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
-  selectedFile: {
-    fontSize: 14,
+  fileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
     marginVertical: 10,
+  },
+  smallButton: {
+    backgroundColor: '#573321',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  smallButtonText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
 });
 
