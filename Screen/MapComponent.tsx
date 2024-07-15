@@ -5,7 +5,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import Assets from './Assets'; // Ajusta la ruta según tu estructura de proyecto
 import { GOOGLE_MAPS_APIKEY } from '@env';
 
-const MapComponent = ({ location, selectedDestination, setSelectedDestination, veterinaries }) => {
+const MapComponent = ({ location, selectedDestination, setSelectedDestination, veterinaries, onMarkerPress }) => {
   const handleMarkerPress = (veterinary) => {
     setSelectedDestination(veterinary);
   };

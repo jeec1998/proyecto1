@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert, ScrollView, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,7 +20,7 @@ const VeterinarysScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://f86a-170-238-1-36.ngrok-free.app/veterinaria', { headers });
+                const response = await axios.get('https://80e8-157-100-134-105.ngrok-free.app/veterinaria', { headers });
                 console.log('Response from API:', response.data);
 
                 setVetData(response.data);
@@ -33,18 +33,18 @@ const VeterinarysScreen = () => {
         fetchVetData();
     }, []);
 
-    const handleVetDetail = (vet) => {
-        navigation.navigate('VeterinaryDetailScreen', { vet });
+    const handleVetDetail = (vetId) => {
+        navigation.navigate('VeterinaryDetailScreen', { vetId });
     };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
             {vetData.map((vet, index) => (
                 <View key={index} style={styles.vetContainer}>
-                    <TouchableOpacity onPress={() => handleVetDetail(vet)}>
+                    <TouchableOpacity onPress={() => handleVetDetail(vet._id)}>
                         <Text style={styles.name}>{vet.veterinaryName}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleVetDetail(vet)}>
+                    <TouchableOpacity onPress={() => handleVetDetail(vet._id)}>
                         {vet.imagVet && (
                             <Image 
                                 source={{ uri: vet.imagVet }} 

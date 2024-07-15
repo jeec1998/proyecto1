@@ -27,11 +27,14 @@ const ProfileScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://f86a-170-238-1-36.ngrok-free.app/user', { headers });
+                const response = await axios.get('https://80e8-157-100-134-105.ngrok-free.app/user/me', { headers });
                 console.log('Response from API:', response.data);
 
                 const { _id, firstName, lastName, email, phoneNumber } = response.data;
                 setUserData({ userId: _id, firstName, lastName, email, phoneNumber });
+
+                // Guardar el ID del usuario en AsyncStorage
+                await AsyncStorage.setItem('userId', _id);
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 Alert.alert('Error', 'No se pudo obtener la información del usuario.');
@@ -42,7 +45,7 @@ const ProfileScreen = () => {
     }, []);
 
     const handleUpdate = async () => {
-        const { userId, firstName, lastName, phoneNumber } = userData;
+        const { firstName, lastName, phoneNumber } = userData;
         const updatedUserData = {
             firstName,
             lastName,
@@ -59,7 +62,7 @@ const ProfileScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.patch('https://f86a-170-238-1-36.ngrok-free.app/user', updatedUserData, { headers });
+            await axios.patch('https://80e8-157-100-134-105.ngrok-free.app/user', updatedUserData, { headers });
             Alert.alert('Actualización exitosa', 'La información del usuario ha sido actualizada.');
         } catch (error) {
             console.error('Error updating user data:', error);
@@ -76,9 +79,8 @@ const ProfileScreen = () => {
             <View style={styles.logoContainer}>
                 <Image source={Assets.logoImage} style={styles.logo} />
             </View>
-            <Text style={styles.header}>Información del Cliente</Text>
             <View style={styles.formContainer}>
-                <Text style={styles.label}>ID del Usuario: {userData.userId}</Text>
+            <Text style={styles.header}>Información Personal</Text>
                 <TextInput
                     style={[styles.input, styles.textBlack]}
                     placeholder="Nombre"
@@ -117,26 +119,29 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#F1D47B',
         padding: 20,
     },
     logoContainer: {
-        marginTop: -150,
         alignItems: 'center',
+        marginBottom: 20,
+        marginTop: -150,
     },
     logo: {
-        width: 200,
-        height: 200,
+        width: 500, // Agrandar el logo
+        height: 500,
         resizeMode: 'contain',
     },
     header: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+        color: 'black',
+        textAlign: 'center',
     },
     formContainer: {
         marginBottom: 20,
-        marginTop: -100,
+        marginTop: -200,
     },
     input: {
         height: 40,
@@ -160,10 +165,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
-    },
-    label: {
-        fontSize: 16,
-        marginBottom: 10,
     },
 });
 

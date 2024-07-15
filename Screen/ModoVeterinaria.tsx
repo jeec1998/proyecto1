@@ -13,16 +13,25 @@ const ModVeterinary = () => {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [veterinaryContactNumber, setVeterinaryContactNumber] = useState('');
-  const [certificatePdf, setCertificatePdf] = useState(null);
+  const [certificateImage, setCertificateImage] = useState(null);
   const [image, setImage] = useState(null);
   const navigation = useNavigation();
 
   const selectFile = async () => {
     try {
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.pdf],
+        type: [DocumentPicker.types.images],
       });
-      setCertificatePdf(res);
+
+      if (res[0].type === 'image/jpeg' || res[0].type === 'image/png') {
+        const reader = new FileReader();
+        reader.readAsDataURL(res[0]);
+        reader.onloadend = () => {
+          setCertificateImage(reader.result);
+        };
+      } else {
+        Alert.alert('Formato incorrecto', 'Solo se permiten imágenes JPG o PNG.');
+      }
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User cancelled the file picker.');
@@ -38,7 +47,11 @@ const ModVeterinary = () => {
         type: [DocumentPicker.types.images],
       });
       if (res[0].type === 'image/jpeg' || res[0].type === 'image/png') {
-        setImage(res);
+        const reader = new FileReader();
+        reader.readAsDataURL(res[0]);
+        reader.onloadend = () => {
+          setImage(reader.result);
+        };
       } else {
         Alert.alert('Formato incorrecto', 'Solo se permiten imágenes JPG o PNG.');
       }
@@ -52,33 +65,20 @@ const ModVeterinary = () => {
   };
 
   const handleRegister = async () => {
-    const formData = new FormData();
-    formData.append('veterinaryName', veterinaryName);
-    formData.append('description', description);
-    formData.append('latitude', latitude);
-    formData.append('longitude', longitude);
-    formData.append('veterinaryContactNumber', `+593${veterinaryContactNumber}`); // Agrega el código de país
-
-    if (image) {
-      formData.append('image', {
-        uri: image[0].uri,
-        type: image[0].type,
-        name: image[0].name,
-      });
-    }
-
-    if (certificatePdf) {
-      formData.append('certificatePdf', {
-        uri: certificatePdf.uri,
-        type: certificatePdf.type,
-        name: certificatePdf.name,
-      });
-    }
+    const data = {
+      veterinaryName,
+      description,
+      latitude,
+      longitude,
+      veterinaryContactNumber: `+593${veterinaryContactNumber}`,
+      image,
+      certificateImage,
+    };
 
     try {
-      const response = await axios.post(`https://f86a-170-238-1-36.ngrok-free.app/veterinaria`, formData, {
+      const response = await axios.post(`${API_URL}/veterinaria`, data, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
         },
       });
       Alert.alert('Registro exitoso');
@@ -136,17 +136,17 @@ const ModVeterinary = () => {
               keyboardType="phone-pad"
             />
           </View>
-          {!certificatePdf ? (
+          {!certificateImage ? (
             <TouchableOpacity style={styles.button} onPress={selectFile}>
-              <Text style={styles.buttonText}>Seleccionar PDF</Text>
+              <Text style={styles.buttonText}>Seleccionar Imagen del Certificado</Text>
             </TouchableOpacity>
           ) : (
             <View style={styles.fileContainer}>
               <TextInput
                 style={styles.smallInput}
-                placeholder="PDF Seleccionado"
+                placeholder="Imagen del Certificado Seleccionada"
                 placeholderTextColor="#ccc"
-                value={certificatePdf[0].name}
+                value={certificateImage}
                 editable={false}
               />
               <TouchableOpacity onPress={selectFile} style={styles.smallButton}>
@@ -164,7 +164,7 @@ const ModVeterinary = () => {
                 style={styles.smallInput}
                 placeholder="Imagen Seleccionada"
                 placeholderTextColor="#ccc"
-                value={image[0].name}
+                value={image}
                 editable={false}
               />
               <TouchableOpacity onPress={selectImage} style={styles.smallButton}>

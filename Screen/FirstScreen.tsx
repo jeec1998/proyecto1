@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, Modal, Alert, PermissionsAndroid, Platform } from 'react-native';
 import MapComponent from './MapComponent';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,12 +17,15 @@ const FirstScreen = () => {
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [veterinaries, setVeterinaries] = useState([]);
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+  const [simulatedLocation, setSimulatedLocation] = useState(location); // Estado para la ubicación simulada
   const navigation = useNavigation();
+  const route = useRoute();
 
   useEffect(() => {
     requestLocationPermission();
     fetchVeterinaries();
     fetch2FAStatus();
+
     const locationWatcher = Geolocation.watchPosition(
       (position) => {
         const current = {
@@ -30,6 +33,7 @@ const FirstScreen = () => {
           longitude: position.coords.longitude,
         };
         setLocation(current);
+        setSimulatedLocation(current); // Inicializar la ubicación simulada
       },
       (error) => {
         Alert.alert('Error al obtener la ubicación:', error.message);
@@ -44,6 +48,32 @@ const FirstScreen = () => {
       Geolocation.clearWatch(locationWatcher);
     };
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSimulatedLocation((prevLocation) => {
+        const newLatitude = prevLocation.latitude + 0.0001; // Simular un cambio en la latitud
+        const newLongitude = prevLocation.longitude + 0.0001; // Simular un cambio en la longitud
+        return { latitude: newLatitude, longitude: newLongitude };
+      });
+    }, 10000); // Actualizar cada 20 segundos
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (route.params?.destination) {
+      const destination = route.params.destination;
+      const foundVeterinary = veterinaries.find(vet => 
+        vet.latitude === destination.latitude && vet.longitude === destination.longitude
+      );
+      if (foundVeterinary) {
+        setSelectedDestination(foundVeterinary);
+      } else {
+        setSelectedDestination(destination);
+      }
+    }
+  }, [route.params?.destination, veterinaries]);
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'android') {
@@ -80,7 +110,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://f86a-170-238-1-36.ngrok-free.app/veterinaria`, { headers });
+      const response = await axios.get(`https://80e8-157-100-134-105.ngrok-free.app/veterinaria`, { headers });
       setVeterinaries(response.data);
     } catch (error) {
       Alert.alert('Error al cargar las ubicaciones de las veterinarias:', error.message);
@@ -98,7 +128,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://f86a-170-238-1-36.ngrok-free.app/2fa/generate`, { headers });
+      const response = await axios.get(`https://80e8-157-100-134-105.ngrok-free.app/2fa/generate`, { headers });
       setIs2FAEnabled(response.data.is2FAEnabled);
     } catch (error) {
       Alert.alert('Error al obtener el estado del 2FA:', error.message);
@@ -116,7 +146,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.post(`https://f86a-170-238-1-36.ngrok-free.app/2fa/enable`, {}, { headers });
+      const response = await axios.post(`https://80e8-157-100-134-105.ngrok-free.app/2fa/enable`, {}, { headers });
       setIs2FAEnabled(response.data.is2FAEnabled);
       Alert.alert('Éxito', `Doble factor de autenticación ${response.data.is2FAEnabled ? 'activado' : 'desactivado'}`);
     } catch (error) {
@@ -163,6 +193,10 @@ const FirstScreen = () => {
     }
   };
 
+  const handleMarkerPress = (veterinary) => {
+    setSelectedDestination(veterinary);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
@@ -179,10 +213,11 @@ const FirstScreen = () => {
       </View>
 
       <MapComponent
-        location={location}
+        location={simulatedLocation} // Usar la ubicación simulada
         selectedDestination={selectedDestination}
         setSelectedDestination={setSelectedDestination}
         veterinaries={filteredVeterinaries}
+        onMarkerPress={handleMarkerPress}
       />
 
       <Modal

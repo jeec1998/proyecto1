@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './LoginScreen';
@@ -13,26 +13,35 @@ import FavScreen from './FavScreen';
 import SelectLocationScreen from './SlecetLocationScreen';
 import VeterinaryDetailScreen from './VetarinaryDetailsScreen';
 import ChangePasswordScreen from './ChangePasswordScreen';
+import VeterinaryRequestsScreen from './Admin/VeterinaryRequestsScreen';
+import NormalVeterinaryListScreen from './Admin/NormalVeterinaryListScreen';
+import AdminDashboardScreen from './Admin/AdminDashboardScreen';
+
 
 const Stack = createStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="First" component={FirstScreen}/>
-        <Stack.Screen name='Profile' component={ProfileScreen}/>
-        <Stack.Screen name='ModVeterinary' component={ModVeterinary}/>
-        <Stack.Screen name='VeterinarysScreen' component={VeterinarysScreen}/>
-        <Stack.Screen name='FavScreen' component={FavScreen} />
-        <Stack.Screen name="SelectLocation" component={SelectLocationScreen} />
-        <Stack.Screen name="VeterinaryDetailScreen" component={VeterinaryDetailScreen} />
-        <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+  
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="First" component={FirstScreen}/>
+          <Stack.Screen name='Profile' component={ProfileScreen}/>
+          <Stack.Screen name='ModVeterinary' component={ModVeterinary}/>
+          <Stack.Screen name='VeterinarysScreen' component={VeterinarysScreen}/>
+          <Stack.Screen name='FavScreen' component={FavScreen} />
+          <Stack.Screen name="SelectLocation" component={SelectLocationScreen} />
+          <Stack.Screen name="VeterinaryDetailScreen" component={VeterinaryDetailScreen} />
+          <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
+          <Stack.Screen name="VeterinaryRequestsScreen" component={VeterinaryRequestsScreen} />
+        <Stack.Screen name="NormalVeterinaryListScreen" component={NormalVeterinaryListScreen} />
+        <Stack.Screen name="AdminDashboardScreen" component={AdminDashboardScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+  
   );
 }
 

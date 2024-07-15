@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Assets from './Assets';
 
 const ChangePasswordScreen = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -32,13 +33,13 @@ const ChangePasswordScreen = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await axios.patch('https://f86a-170-238-1-36.ngrok-free.app/user/change-password', {
+      const response = await axios.patch('https://80e8-157-100-134-105.ngrok-free.app/user/change-password', {
         currentPassword,
         newPassword,
       }, { headers });
 
       Alert.alert('Éxito', 'La contraseña ha sido actualizada.');
-      navigation.navigate('ProfileScreen');
+      navigation.navigate('Profile');
     } catch (error) {
       console.error('Error changing password:', error);
       Alert.alert('Error', 'Hubo un problema al cambiar la contraseña.');
@@ -51,8 +52,11 @@ const ChangePasswordScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.logoContainer}>
+          <Image source={Assets.logoImage} style={styles.logo} />
+        </View>
         <View style={styles.formContainer}>
-          <Text style={styles.header}>Cambiar Contraseña</Text>
+          <Text style={[styles.header, styles.textBlack]}>Cambiar Contraseña</Text>
           <TextInput
             style={[styles.input, styles.textBlack]}
             placeholder="Contraseña Actual"
@@ -89,9 +93,19 @@ const ChangePasswordScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F1D47B',
     padding: 20,
   },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: -400,
+},
+logo: {
+    width: 500, // Agrandar el logo
+    height: 500,
+    resizeMode: 'contain',
+},
   scrollContainer: {
     flexGrow: 1,
     alignItems: 'center',
@@ -100,6 +114,7 @@ const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
     alignItems: 'center',
+    marginTop: -200, // Ajustar la posición del formulario
   },
   header: {
     fontSize: 24,
@@ -127,6 +142,8 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     marginVertical: 10,
+    position: 'absolute', // Posiciona el botón encima del logo
+    top: 260, // Ajustar la posición del botón
   },
   buttonText: {
     color: '#fff',

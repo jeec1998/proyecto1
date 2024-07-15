@@ -1,24 +1,52 @@
-import React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, Alert, Linking } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Alert, Linking, TextInput } from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const VeterinaryDetailScreen = ({ route, navigation }) => {
-    const { vet } = route.params;
+    const { vetId } = route.params;
+    const [vet, setVet] = useState(null);
+
+    useEffect(() => {
+        const fetchVetDetail = async () => {
+            try {
+                const accessToken = await AsyncStorage.getItem('accessToken');
+                if (!accessToken) {
+                    Alert.alert('Error', 'No se encontró el access token.');
+                    return;
+                }
+
+                const headers = {
+                    Authorization: `Bearer ${accessToken}`
+                };
+                const response = await axios.get(`https://80e8-157-100-134-105.ngrok-free.app/veterinaria/${vetId}`, { headers });
+                console.log('Response from API:', response.data);
+
+                setVet(response.data);
+            } catch (error) {
+                console.error(error);
+                Alert.alert('Error', 'No se pudo obtener la información detallada de la veterinaria.');
+            }
+        };
+
+        fetchVetDetail();
+    }, [vetId]);
+
+    if (!vet) {
+        return <Text>Cargando...</Text>;
+    }
 
     const handleRate = () => {
         Alert.alert('Calificar', 'Funcionalidad para calificar con estrellas aún no implementada.');
     };
 
     const handleMessage = () => {
-        if (!vet.phoneNumber) {
+        if (!vet.veterinaryContactNumber) {
             Alert.alert('Error', 'El número de teléfono no está disponible.');
             return;
         }
-
-        let phoneNumber = vet.phoneNumber.replace(/^0+/, ''); // Eliminar ceros iniciales
-        if (!phoneNumber.startsWith('593')) {
-            phoneNumber = `593${phoneNumber}`;
-        }
-        const url = `whatsapp://send?phone=${phoneNumber}`;
+       
+        const url = `whatsapp://send?phone=${vet.veterinaryContactNumber}`;
 
         Linking.openURL(url).catch(() => {
             Alert.alert('Error', 'No se pudo abrir WhatsApp. Asegúrate de tener WhatsApp instalado.');
@@ -26,16 +54,11 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
     };
 
     const handleCall = () => {
-        if (!vet.phoneNumber) {
+        if (!vet.veterinaryContactNumber) {
             Alert.alert('Error', 'El número de teléfono no está disponible.');
             return;
         }
-
-        let phoneNumber = vet.phoneNumber.replace(/^0+/, ''); // Eliminar ceros iniciales
-        if (!phoneNumber.startsWith('593')) {
-            phoneNumber = `593${phoneNumber}`;
-        }
-        const url = `tel:${phoneNumber}`;
+        const url = `tel:${vet.veterinaryContactNumber}`;
 
         Linking.openURL(url).catch(() => {
             Alert.alert('Error', 'No se pudo realizar la llamada.');
@@ -43,7 +66,7 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
     };
 
     const handleNavigate = () => {
-        navigation.navigate('FirstScreen'); 
+        navigation.navigate('First', { destination: vet.location }); 
     };
 
     return (
@@ -92,8 +115,8 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 10,
-        fontStyle: 'italic', // Aplica el estilo cursiva
-        color: '#573321', // Aplica un color específico
+        fontStyle: 'italic',
+        color: '#573321',
     },
     vetImage: {
         width: '100%',
@@ -104,8 +127,13 @@ const styles = StyleSheet.create({
     descriptionInput: {
         width: '100%',
         paddingHorizontal: 10,
-        color: 'black', // Asegura que el texto sea de color negro
-        borderWidth: 0, // Quita el borde
+        color: 'black',
+        borderWidth: 0,
+    },
+    text: {
+        fontSize: 16,
+        marginBottom: 5,
+        color: '#573321',
     },
     buttonContainer: {
         flexDirection: 'row',
