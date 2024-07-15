@@ -33,7 +33,7 @@ const ChangePasswordScreen = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await axios.patch('https://80e8-157-100-134-105.ngrok-free.app/user/change-password', {
+      const response = await axios.patch('https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/user/change-password', {
         currentPassword,
         newPassword,
       }, { headers });

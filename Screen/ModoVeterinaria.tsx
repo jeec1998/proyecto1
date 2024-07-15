@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -6,6 +6,7 @@ import DocumentPicker from 'react-native-document-picker';
 import MaskInput from 'react-native-mask-input';
 import Assets from './Assets';
 import { API_URL } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ModVeterinary = () => {
   const [veterinaryName, setVeterinaryName] = useState('');
@@ -14,44 +15,17 @@ const ModVeterinary = () => {
   const [longitude, setLongitude] = useState('');
   const [veterinaryContactNumber, setVeterinaryContactNumber] = useState('');
   const [certificateImage, setCertificateImage] = useState(null);
-  const [image, setImage] = useState(null);
+  const [vetImg, setVetImg] = useState(null);
   const navigation = useNavigation();
 
-  const selectFile = async () => {
+  const selectFile = async (setter) => {
     try {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.images],
       });
 
       if (res[0].type === 'image/jpeg' || res[0].type === 'image/png') {
-        const reader = new FileReader();
-        reader.readAsDataURL(res[0]);
-        reader.onloadend = () => {
-          setCertificateImage(reader.result);
-        };
-      } else {
-        Alert.alert('Formato incorrecto', 'Solo se permiten imágenes JPG o PNG.');
-      }
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('User cancelled the file picker.');
-      } else {
-        console.error('Error while picking the file:', err);
-      }
-    }
-  };
-
-  const selectImage = async () => {
-    try {
-      const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images],
-      });
-      if (res[0].type === 'image/jpeg' || res[0].type === 'image/png') {
-        const reader = new FileReader();
-        reader.readAsDataURL(res[0]);
-        reader.onloadend = () => {
-          setImage(reader.result);
-        };
+        setter(res[0]);
       } else {
         Alert.alert('Formato incorrecto', 'Solo se permiten imágenes JPG o PNG.');
       }
@@ -65,22 +39,49 @@ const ModVeterinary = () => {
   };
 
   const handleRegister = async () => {
-    const data = {
-      veterinaryName,
-      description,
-      latitude,
-      longitude,
-      veterinaryContactNumber: `+593${veterinaryContactNumber}`,
-      image,
-      certificateImage,
-    };
+    const data = new FormData();
+    data.append('veterinaryName', veterinaryName);
+    data.append('description', description);
+    data.append('latitude', latitude);
+    data.append('longitude', longitude);
+    data.append('veterinaryContactNumber', `+593${veterinaryContactNumber}`);
+
+    if (certificateImage) {
+      data.append('files', {
+        uri: certificateImage.uri,
+        type: certificateImage.type,
+        name: certificateImage.name,
+      });
+    }
+
+    if (vetImg) {
+      data.append('files', {
+        uri: vetImg.uri,
+        type: vetImg.type,
+        name: vetImg.name,
+      });
+    }
 
     try {
-      const response = await axios.post(`${API_URL}/veterinaria`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      const userId = await AsyncStorage.getItem('userId');
+      if (!accessToken) {
+        Alert.alert('Error', 'No se encontró el access token.');
+        return;
+      }
+      if (!userId) {
+        Alert.alert('Error', 'No se encontró el user ID.');
+        return;
+      }
+
+      data.append('userId', userId);
+
+      const headers = {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${accessToken}`
+      };
+
+      const response = await axios.post(`https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria`, data, { headers});
       Alert.alert('Registro exitoso');
       navigation.navigate('First');
     } catch (error) {
@@ -137,8 +138,8 @@ const ModVeterinary = () => {
             />
           </View>
           {!certificateImage ? (
-            <TouchableOpacity style={styles.button} onPress={selectFile}>
-              <Text style={styles.buttonText}>Seleccionar Imagen del Certificado</Text>
+            <TouchableOpacity style={styles.button} onPress={() => selectFile(setCertificateImage)}>
+              <Text style={styles.buttonText}>Seleccionar Certificado</Text>
             </TouchableOpacity>
           ) : (
             <View style={styles.fileContainer}>
@@ -146,16 +147,16 @@ const ModVeterinary = () => {
                 style={styles.smallInput}
                 placeholder="Imagen del Certificado Seleccionada"
                 placeholderTextColor="#ccc"
-                value={certificateImage}
+                value={certificateImage.name}
                 editable={false}
               />
-              <TouchableOpacity onPress={selectFile} style={styles.smallButton}>
+              <TouchableOpacity onPress={() => selectFile(setCertificateImage)} style={styles.smallButton}>
                 <Text style={styles.smallButtonText}>Actualizar</Text>
               </TouchableOpacity>
             </View>
           )}
-          {!image ? (
-            <TouchableOpacity style={styles.button} onPress={selectImage}>
+          {!vetImg ? (
+            <TouchableOpacity style={styles.button} onPress={() => selectFile(setVetImg)}>
               <Text style={styles.buttonText}>Seleccionar Imagen</Text>
             </TouchableOpacity>
           ) : (
@@ -164,10 +165,10 @@ const ModVeterinary = () => {
                 style={styles.smallInput}
                 placeholder="Imagen Seleccionada"
                 placeholderTextColor="#ccc"
-                value={image}
+                value={vetImg.name}
                 editable={false}
               />
-              <TouchableOpacity onPress={selectImage} style={styles.smallButton}>
+              <TouchableOpacity onPress={() => selectFile(setVetImg)} style={styles.smallButton}>
                 <Text style={styles.smallButtonText}>Actualizar</Text>
               </TouchableOpacity>
             </View>

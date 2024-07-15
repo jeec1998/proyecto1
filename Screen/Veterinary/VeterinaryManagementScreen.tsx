@@ -24,7 +24,7 @@ const VeterinaryManagementScreen = () => {
           Authorization: `Bearer ${accessToken}`,
         };
 
-        const response = await axios.get('https://80e8-157-100-134-105.ngrok-free.app/veterinaries', { headers });
+        const response = await axios.get('https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria', { headers });
         setVeterinaries(response.data);
       } catch (error) {
         console.error('Error fetching veterinaries:', error);
@@ -52,7 +52,7 @@ const VeterinaryManagementScreen = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await axios.post('https://80e8-157-100-134-105.ngrok-free.app/veterinaries', {
+      const response = await axios.post('https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria', {
         name,
         address,
         phoneNumber,
@@ -81,7 +81,7 @@ const VeterinaryManagementScreen = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      await axios.delete(`https://80e8-157-100-134-105.ngrok-free.app/veterinaries/${id}`, { headers });
+      await axios.delete(`https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria/${id}`, { headers });
       setVeterinaries(veterinaries.filter(vet => vet._id !== id));
       Alert.alert('Éxito', 'Veterinaria eliminada exitosamente.');
     } catch (error) {

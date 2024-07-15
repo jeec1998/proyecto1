@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { API_URL } from '@env';
 
-const VeterinaryScreen = () => {
+const TopVetScreen = () => {
     const [vetName, setVetName] = useState('');
     const [vetImage, setVetImage] = useState(null); // Aquí puedes usar un estado para la imagen
     const [vetDescription, setVetDescription] = useState('');
@@ -107,4 +107,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default VeterinaryScreen;
+export default TopVetScreen ;

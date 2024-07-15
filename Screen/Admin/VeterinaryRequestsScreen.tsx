@@ -19,7 +19,7 @@ const VeterinaryRequestsScreen = () => {
           Authorization: `Bearer ${accessToken}`,
         };
 
-        const response = await axios.get('https://80e8-157-100-134-105.ngrok-free.app/veterinary-requests', { headers });
+        const response = await axios.get('https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria', { headers });
         setRequests(response.data);
       } catch (error) {
         console.error('Error fetching requests:', error);
@@ -42,7 +42,7 @@ const VeterinaryRequestsScreen = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      await axios.patch(`https://80e8-157-100-134-105.ngrok-free.app/veterinary-requests/${id}/approve`, {}, { headers });
+      await axios.patch(`https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria/${id}/approve`, {}, { headers });
       setRequests(requests.filter(request => request._id !== id));
       Alert.alert('Éxito', 'Solicitud de veterinaria aprobada exitosamente.');
     } catch (error) {
@@ -63,7 +63,7 @@ const VeterinaryRequestsScreen = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      await axios.delete(`https://80e8-157-100-134-105.ngrok-free.app/veterinary-requests/${id}`, { headers });
+      await axios.delete(`https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria/${id}`, { headers });
       setRequests(requests.filter(request => request._id !== id));
       Alert.alert('Éxito', 'Solicitud de veterinaria eliminada exitosamente.');
     } catch (error) {

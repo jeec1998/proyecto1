@@ -16,6 +16,7 @@ import ChangePasswordScreen from './ChangePasswordScreen';
 import VeterinaryRequestsScreen from './Admin/VeterinaryRequestsScreen';
 import NormalVeterinaryListScreen from './Admin/NormalVeterinaryListScreen';
 import AdminDashboardScreen from './Admin/AdminDashboardScreen';
+import TopVetScreen from './TopVetScreen';
 
 
 const Stack = createStackNavigator();
@@ -39,6 +40,7 @@ function App() {
           <Stack.Screen name="VeterinaryRequestsScreen" component={VeterinaryRequestsScreen} />
         <Stack.Screen name="NormalVeterinaryListScreen" component={NormalVeterinaryListScreen} />
         <Stack.Screen name="AdminDashboardScreen" component={AdminDashboardScreen} />
+        <Stack.Screen name="TopVet" component={TopVetScreen} />
         </Stack.Navigator>
       </NavigationContainer>
   

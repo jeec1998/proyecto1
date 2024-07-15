@@ -27,7 +27,7 @@ const ProfileScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://80e8-157-100-134-105.ngrok-free.app/user/me', { headers });
+                const response = await axios.get('https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/user/me', { headers });
                 console.log('Response from API:', response.data);
 
                 const { _id, firstName, lastName, email, phoneNumber } = response.data;
@@ -62,7 +62,7 @@ const ProfileScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.patch('https://80e8-157-100-134-105.ngrok-free.app/user', updatedUserData, { headers });
+            await axios.patch('https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/user', updatedUserData, { headers });
             Alert.alert('Actualización exitosa', 'La información del usuario ha sido actualizada.');
         } catch (error) {
             console.error('Error updating user data:', error);

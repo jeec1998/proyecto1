@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Alert, Linking, TextInput } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Assets from './Assets';
 
 const VeterinaryDetailScreen = ({ route, navigation }) => {
     const { vetId } = route.params;
@@ -19,7 +20,7 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://80e8-157-100-134-105.ngrok-free.app/veterinaria/${vetId}`, { headers });
+                const response = await axios.get(`https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria/${vetId}`, { headers });
                 console.log('Response from API:', response.data);
 
                 setVet(response.data);
@@ -68,9 +69,15 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
     const handleNavigate = () => {
         navigation.navigate('First', { destination: vet.location }); 
     };
+    const gotoFirstScreen = () => {
+        navigation.navigate('First');
+      };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
+                  <TouchableOpacity style={styles.imageContainer} onPress={gotoFirstScreen}>
+        <Image source={Assets.patitaback} style={styles.image} />
+      </TouchableOpacity>
             <Text style={styles.name}>{vet.veterinaryName}</Text>
             {vet.imagVet && (
                 <Image 
@@ -135,6 +142,15 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         color: '#573321',
     },
+    imageContainer: {
+        position: 'absolute',
+        top: 10,
+        left: 10,
+      },
+      image: {
+        width: 40,
+        height: 40,
+      },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',

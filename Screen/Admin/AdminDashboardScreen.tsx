@@ -18,7 +18,7 @@ const AdminDashboardScreen = () => {
         style={styles.button}
         onPress={() => navigation.navigate('NormalVeterinaryListScreen')}
       >
-        <Text style={styles.buttonText}>Ver Veterinarias Normales</Text>
+        <Text style={styles.buttonText}>Ver Veterinarias</Text>
       </TouchableOpacity>
     </View>
   );

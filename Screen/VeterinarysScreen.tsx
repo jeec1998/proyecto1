@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView, Image } fr
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Assets from './Assets';
 
 const VeterinarysScreen = () => {
     const [vetData, setVetData] = useState([]);
@@ -20,7 +21,7 @@ const VeterinarysScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://80e8-157-100-134-105.ngrok-free.app/veterinaria', { headers });
+                const response = await axios.get('https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria', { headers });
                 console.log('Response from API:', response.data);
 
                 setVetData(response.data);
@@ -39,6 +40,9 @@ const VeterinarysScreen = () => {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.logoContainer}>
+                <Image source={Assets.logoImage} style={styles.logo} />
+            </View>
             {vetData.map((vet, index) => (
                 <View key={index} style={styles.vetContainer}>
                     <TouchableOpacity onPress={() => handleVetDetail(vet._id)}>
@@ -69,6 +73,17 @@ const styles = StyleSheet.create({
     vetContainer: {
         marginBottom: 20,
         width: '100%',
+        marginTop: -240,
+    },
+    logoContainer: {
+        alignItems: 'center',
+        marginBottom: 20,
+        marginTop: -150,
+    },
+    logo: {
+        width: 500, // Agrandar el logo
+        height: 500,
+        resizeMode: 'contain',
     },
     name: {
         fontSize: 24,

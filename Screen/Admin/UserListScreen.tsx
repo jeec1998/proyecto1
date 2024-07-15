@@ -19,7 +19,7 @@ const UserListScreen = () => {
           Authorization: `Bearer ${accessToken}`,
         };
 
-        const response = await axios.get('https://80e8-157-100-134-105.ngrok-free.app/users', { headers });
+        const response = await axios.get('https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/user', { headers });
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -42,7 +42,7 @@ const UserListScreen = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      await axios.delete(`https://80e8-157-100-134-105.ngrok-free.app/users/${id}`, { headers });
+      await axios.delete(`https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/user/${id}`, { headers });
       setUsers(users.filter(user => user._id !== id));
       Alert.alert('Éxito', 'Usuario eliminado exitosamente.');
     } catch (error) {
