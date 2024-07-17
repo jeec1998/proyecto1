@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -21,13 +21,13 @@ const ModVeterinary = () => {
   const selectFile = async (setter) => {
     try {
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images],
+        type: [DocumentPicker.types.images, DocumentPicker.types.pdf],
       });
 
-      if (res[0].type === 'image/jpeg' || res[0].type === 'image/png') {
+      if (res[0].type === 'image/jpeg' || res[0].type === 'image/png' || res[0].type === 'application/pdf') {
         setter(res[0]);
       } else {
-        Alert.alert('Formato incorrecto', 'Solo se permiten imágenes JPG o PNG.');
+        Alert.alert('Formato incorrecto', 'Solo se permiten imágenes JPG, PNG o PDF.');
       }
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -74,14 +74,12 @@ const ModVeterinary = () => {
         return;
       }
 
-      data.append('userId', userId);
-
       const headers = {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${accessToken}`
       };
 
-      const response = await axios.post(`https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria`, data, { headers});
+      const response = await axios.post(`https://7bab-2800-bf0-2401-1128-3197-5a95-cf0-630c.ngrok-free.app/veterinaria`, data, { headers });
       Alert.alert('Registro exitoso');
       navigation.navigate('First');
     } catch (error) {

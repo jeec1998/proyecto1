@@ -19,7 +19,7 @@ const NormalVeterinaryListScreen = () => {
           Authorization: `Bearer ${accessToken}`,
         };
 
-        const response = await axios.get('https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria', { headers });
+        const response = await axios.get('https://7bab-2800-bf0-2401-1128-3197-5a95-cf0-630c.ngrok-free.app/veterinaria', { headers });
         setVeterinaries(response.data);
       } catch (error) {
         console.error('Error fetching veterinaries:', error);
@@ -42,7 +42,7 @@ const NormalVeterinaryListScreen = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      await axios.delete(`https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaries/${id}`, { headers });
+      await axios.delete(`https://7bab-2800-bf0-2401-1128-3197-5a95-cf0-630c.ngrok-free.app/veterinaries/${id}`, { headers });
       setVeterinaries(veterinaries.filter(vet => vet._id !== id));
       Alert.alert('Éxito', 'Veterinaria eliminada exitosamente.');
     } catch (error) {

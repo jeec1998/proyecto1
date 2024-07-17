@@ -17,6 +17,7 @@ import VeterinaryRequestsScreen from './Admin/VeterinaryRequestsScreen';
 import NormalVeterinaryListScreen from './Admin/NormalVeterinaryListScreen';
 import AdminDashboardScreen from './Admin/AdminDashboardScreen';
 import TopVetScreen from './TopVetScreen';
+import MapComponent from './MapComponent';
 
 
 const Stack = createStackNavigator();
@@ -27,6 +28,7 @@ function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="MapComponent" component={MapComponent} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="First" component={FirstScreen}/>

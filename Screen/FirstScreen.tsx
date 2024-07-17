@@ -110,7 +110,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/veterinaria`, { headers });
+      const response = await axios.get(`https://7bab-2800-bf0-2401-1128-3197-5a95-cf0-630c.ngrok-free.app/veterinaria`, { headers });
       setVeterinaries(response.data);
     } catch (error) {
       Alert.alert('Error al cargar las ubicaciones de las veterinarias:', error.message);
@@ -128,7 +128,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/2fa/generate`, { headers });
+      const response = await axios.get(`https://7bab-2800-bf0-2401-1128-3197-5a95-cf0-630c.ngrok-free.app/2fa/generate`, { headers });
       setIs2FAEnabled(response.data.is2FAEnabled);
     } catch (error) {
       Alert.alert('Error al obtener el estado del 2FA:', error.message);
@@ -146,7 +146,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.post(`https://0a83-2801-16-4800-5220-5915-790b-3bc4-f8f3.ngrok-free.app/2fa/enable`, {}, { headers });
+      const response = await axios.post(`https://7bab-2800-bf0-2401-1128-3197-5a95-cf0-630c.ngrok-free.app/2fa/enable`, {}, { headers });
       setIs2FAEnabled(response.data.is2FAEnabled);
       Alert.alert('Éxito', `Doble factor de autenticación ${response.data.is2FAEnabled ? 'activado' : 'desactivado'}`);
     } catch (error) {
@@ -187,7 +187,7 @@ const FirstScreen = () => {
 
   const navigateToDestination = () => {
     if (selectedDestination) {
-      Alert.alert('Destino seleccionado', `Latitud: ${selectedDestination.latitude}, Longitud: ${selectedDestination.longitude}`);
+      Alert.alert(`Destino seleccionado: ${selectedDestination.veterinaryName}`);
     } else {
       Alert.alert('Error', 'Por favor selecciona un destino');
     }
