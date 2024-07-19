@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, Modal, Alert, PermissionsAndroid, Platform } from 'react-native';
 import MapComponent from './MapComponent';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -13,13 +13,17 @@ const FirstScreen = () => {
   const [location, setLocation] = useState({
     latitude: -1.66355,
     longitude: -78.6546,
+    latitudeDelta: 0.001,
+    longitudeDelta: 0.001,
   });
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [veterinaries, setVeterinaries] = useState([]);
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
-  const [simulatedLocation, setSimulatedLocation] = useState(location); // Estado para la ubicación simulada
+  const [currentLocation, setCurrentLocation] = useState(location);
+  const [locationUpdateInterval, setLocationUpdateInterval] = useState(null);
   const navigation = useNavigation();
   const route = useRoute();
+  const mapRef = useRef(null);
 
   useEffect(() => {
     requestLocationPermission();
@@ -31,9 +35,11 @@ const FirstScreen = () => {
         const current = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
+          latitudeDelta: 0.001,
+          longitudeDelta: 0.001,
         };
         setLocation(current);
-        setSimulatedLocation(current); // Inicializar la ubicación simulada
+        setCurrentLocation(current);
       },
       (error) => {
         Alert.alert('Error al obtener la ubicación:', error.message);
@@ -47,18 +53,6 @@ const FirstScreen = () => {
     return () => {
       Geolocation.clearWatch(locationWatcher);
     };
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSimulatedLocation((prevLocation) => {
-        const newLatitude = prevLocation.latitude + 0.0001; // Simular un cambio en la latitud
-        const newLongitude = prevLocation.longitude + 0.0001; // Simular un cambio en la longitud
-        return { latitude: newLatitude, longitude: newLongitude };
-      });
-    }, 20000);
-
-    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -110,7 +104,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://7bab-2800-bf0-2401-1128-3197-5a95-cf0-630c.ngrok-free.app/veterinaria`, { headers });
+      const response = await axios.get(`https://dd3f-157-100-134-105.ngrok-free.app/veterinaria`, { headers });
       setVeterinaries(response.data);
     } catch (error) {
       Alert.alert('Error al cargar las ubicaciones de las veterinarias:', error.message);
@@ -128,7 +122,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://7bab-2800-bf0-2401-1128-3197-5a95-cf0-630c.ngrok-free.app/2fa/generate`, { headers });
+      const response = await axios.get(`${API_URL}/2fa/generate`, { headers });
       setIs2FAEnabled(response.data.is2FAEnabled);
     } catch (error) {
       Alert.alert('Error al obtener el estado del 2FA:', error.message);
@@ -146,7 +140,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.post(`https://7bab-2800-bf0-2401-1128-3197-5a95-cf0-630c.ngrok-free.app/2fa/enable`, {}, { headers });
+      const response = await axios.post(`${API_URL}/2fa/enable`, {}, { headers });
       setIs2FAEnabled(response.data.is2FAEnabled);
       Alert.alert('Éxito', `Doble factor de autenticación ${response.data.is2FAEnabled ? 'activado' : 'desactivado'}`);
     } catch (error) {
@@ -166,7 +160,9 @@ const FirstScreen = () => {
   const goToProfileScreen = () => {
     navigation.navigate('Profile');
   };
-
+  const goToFirstScren= () => {
+    navigation.navigate('First');
+  };
   const goToModVeterinary = () => {
     navigation.navigate('ModVeterinary');
   };
@@ -178,19 +174,63 @@ const FirstScreen = () => {
   const goToTopVetScreen = () => {
     navigation.navigate('TopVet');
   };
+
   const goToLoginScreen = () => {
     navigation.navigate('Login');
   };
+  const goToAdminDashboardScreen = () => {
+    navigation.navigate('AdminDashboardScreen');
+  };
+  const goToVeterinaryManagementScreen = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userId'); // Obtén el userId del almacenamiento
+      navigation.navigate('VeterinaryManagementScreen', { userId }); // Navega pasando el userId como parámetro
+    } catch (error) {
+      Alert.alert('Error', 'No se pudo obtener el userId.');
+    }
+  };
+
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
 
-  const navigateToDestination = () => {
-    if (selectedDestination) {
-      Alert.alert(`Destino seleccionado: ${selectedDestination.veterinaryName}`);
-    } else {
-      Alert.alert('Error', 'Por favor selecciona un destino');
+  const navigateToCurrentLocation = () => {
+    if (mapRef.current && currentLocation) {
+      mapRef.current.animateToRegion({
+        ...currentLocation,
+        latitudeDelta: 0.001,
+        longitudeDelta: 0.001,
+      }, 1000);
     }
+    if (locationUpdateInterval) {
+      clearInterval(locationUpdateInterval);
+    }
+    const interval = setInterval(() => {
+      Geolocation.getCurrentPosition(
+        (position) => {
+          const current = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudeDelta: 0.001,
+            longitudeDelta: 0.001,
+          };
+          setLocation(current);
+          setCurrentLocation(current);
+          if (mapRef.current) {
+            mapRef.current.animateToRegion(current, 1000);
+          }
+        },
+        (error) => {
+          Alert.alert('Error al obtener la ubicación:', error.message);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 5000,
+        }
+      );
+    }, 5000);
+    setLocationUpdateInterval(interval);
   };
 
   const handleMarkerPress = (veterinary) => {
@@ -213,7 +253,8 @@ const FirstScreen = () => {
       </View>
 
       <MapComponent
-        location={simulatedLocation} // Usar la ubicación simulada
+        ref={mapRef}
+        location={location}
         selectedDestination={selectedDestination}
         setSelectedDestination={setSelectedDestination}
         veterinaries={filteredVeterinaries}
@@ -241,18 +282,31 @@ const FirstScreen = () => {
               <TouchableOpacity onPress={toggle2FA}>
                 <Text style={styles.menuItem}>{is2FAEnabled ? 'Desactivar' : 'Activar'} 2FA</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={goToLoginScreen} style={styles.logoutButton}>
-                <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToModVeterinary}>
+              <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToModVeterinary}>
               <Text style={styles.modeVeterinariaText}>Modo Veterinaria</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToVeterinaryManagementScreen}>
+              <Text style={styles.modeVeterinariaText}>Mi Veterinaria</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToFirstScren}>
+              <Text style={styles.modeVeterinariaText}>Modo Usuario</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToAdminDashboardScreen}>
+              <Text style={styles.modeVeterinariaText}>Modo Admin</Text>
+            </TouchableOpacity>
+            
+            </View>
+            <TouchableOpacity onPress={goToLoginScreen} style={styles.logoutButton}>
+                <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+              </TouchableOpacity>
           </View>
         </TouchableOpacity>
       </Modal>
 
-      <TouchableOpacity style={styles.navigateButton} onPress={navigateToDestination}>
+      <TouchableOpacity 
+        style={[styles.navigateButton, !selectedDestination && styles.disabledButton]}
+        onPress={navigateToCurrentLocation}
+      >
         <Text style={styles.navigateButtonText}>Navegar</Text>
       </TouchableOpacity>
     </View>
@@ -351,6 +405,9 @@ const styles = StyleSheet.create({
   navigateButtonText: {
     fontSize: 16,
     color: '#573321',
+  },
+  disabledButton: {
+    backgroundColor: '#cccccc',
   },
 });
 

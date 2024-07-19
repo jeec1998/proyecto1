@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Alert, Linking, TextInput } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Rating } from 'react-native-ratings';
 import Assets from './Assets';
 
 const VeterinaryDetailScreen = ({ route, navigation }) => {
     const { vetId } = route.params;
     const [vet, setVet] = useState(null);
+    const [rating, setRating] = useState(0);
 
     useEffect(() => {
         const fetchVetDetail = async () => {
@@ -20,7 +22,7 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://7bab-2800-bf0-2401-1128-3197-5a95-cf0-630c.ngrok-free.app/veterinaria/${vetId}`, { headers });
+                const response = await axios.get(`https://dd3f-157-100-134-105.ngrok-free.app/veterinaria/${vetId}`, { headers });
                 console.log('Response from API:', response.data);
 
                 setVet(response.data);
@@ -33,13 +35,14 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
         fetchVetDetail();
     }, [vetId]);
 
+    const onRatingCompleted = (rating) => {
+        setRating(rating);
+        // Aquí puedes hacer cualquier cosa adicional con la calificación, como enviarla a una API
+    };
+
     if (!vet) {
         return <Text>Cargando...</Text>;
     }
-
-    const handleRate = () => {
-        Alert.alert('Calificar', 'Funcionalidad para calificar con estrellas aún no implementada.');
-    };
 
     const handleMessage = () => {
         if (!vet.veterinaryContactNumber) {
@@ -69,34 +72,46 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
     const handleNavigate = () => {
         navigation.navigate('First', { destination: vet.location }); 
     };
+
     const gotoFirstScreen = () => {
         navigation.navigate('First');
-      };
+    };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-                  <TouchableOpacity style={styles.imageContainer} onPress={gotoFirstScreen}>
-        <Image source={Assets.patitaback} style={styles.image} />
-      </TouchableOpacity>
-            <Text style={styles.name}>{vet.veterinaryName}</Text>
-            {vet.imagVet && (
-                <Image 
-                    source={{ uri: vet.imagVet }} 
-                    style={styles.vetImage} 
-                />
-            )}
-            <TextInput
-                style={styles.descriptionInput}
-                placeholder="Descripción"
-                placeholderTextColor="gray"
-                value={vet.description}
-                editable={false}
-                multiline
-            />
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.smallButton} onPress={handleRate}>
-                    <Text style={styles.buttonText}>Calificar</Text>
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <TouchableOpacity style={styles.imageContainer} onPress={gotoFirstScreen}>
+                    <Image source={Assets.patitaback} style={styles.image} />
                 </TouchableOpacity>
+                <Text style={styles.name}>{vet.veterinaryName}</Text>
+                {vet.imagVet && (
+                    <Image 
+                        source={{ uri: vet.imagVet }} 
+                        style={styles.vetImage} 
+                    />
+                )}
+                <Rating
+                    startingValue={0}
+                    showRating
+                    type='custom'
+                    onFinishRating={onRatingCompleted}
+                    style={styles.starRatingContainer}
+                    imageSize={40}
+                    tintColor="#F1D47B"
+                    ratingColor="#573321" // Color de las estrellas cuando no están seleccionadas
+                    selectedColor="#573321" // Color de las estrellas cuando se seleccionan
+                    ratingTextColor="#000000" // Color del texto del ranking
+                />
+                <TextInput
+                    style={styles.descriptionInput}
+                    placeholder="Descripción"
+                    placeholderTextColor="gray"
+                    value={vet.description}
+                    editable={false}
+                    multiline
+                />
+            </ScrollView>
+            <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.smallButton} onPress={handleMessage}>
                     <Text style={styles.buttonText}>Chat</Text>
                 </TouchableOpacity>
@@ -107,14 +122,16 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
                     <Text style={styles.buttonText}>IR</Text>
                 </TouchableOpacity>
             </View>
-        </ScrollView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        flex: 1,
         backgroundColor: '#F1D47B',
+    },
+    scrollContainer: {
         padding: 20,
         alignItems: 'center',
     },
@@ -127,15 +144,19 @@ const styles = StyleSheet.create({
     },
     vetImage: {
         width: '100%',
-        height: 200,
+        height: 300, // Ajusta la altura para mejorar la visibilidad de la imagen
         resizeMode: 'cover',
         marginBottom: 10,
+        borderRadius: 10, // Opcional: para dar bordes redondeados a la imagen
     },
     descriptionInput: {
         width: '100%',
         paddingHorizontal: 10,
         color: 'black',
         borderWidth: 0,
+    },
+    starRatingContainer: {
+        marginVertical: 5,
     },
     text: {
         fontSize: 16,
@@ -146,16 +167,19 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 10,
         left: 10,
-      },
-      image: {
+    },
+    image: {
         width: 40,
         height: 40,
-      },
+    },
     buttonContainer: {
+        position: 'absolute',
+        bottom: 0,
         flexDirection: 'row',
         justifyContent: 'space-around',
         width: '100%',
-        marginBottom: 20,
+        paddingVertical: 10,
+        backgroundColor: '#F1D47B',
     },
     smallButton: {
         backgroundColor: '#573321',

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Assets from './Assets'; // Ajusta la ruta según tu estructura de proyecto
 import { GOOGLE_MAPS_APIKEY } from '@env';
 
-const MapComponent = ({ location, selectedDestination, setSelectedDestination, veterinaries, onMarkerPress }) => {
+const MapComponent = forwardRef(({ location, selectedDestination, setSelectedDestination, veterinaries, onMarkerPress, animateToRegion }, ref) => {
   const handleMarkerPress = (veterinary) => {
     setSelectedDestination(veterinary);
   };
@@ -13,9 +13,10 @@ const MapComponent = ({ location, selectedDestination, setSelectedDestination, v
   return (
     <View style={styles.container}>
       <MapView
+        ref={ref}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
-        region={{
+        initialRegion={{
           latitude: location.latitude,
           longitude: location.longitude,
           latitudeDelta: 0.0522,
@@ -55,7 +56,7 @@ const MapComponent = ({ location, selectedDestination, setSelectedDestination, v
       </MapView>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

@@ -22,7 +22,7 @@ const VeterinarysScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://7bab-2800-bf0-2401-1128-3197-5a95-cf0-630c.ngrok-free.app/veterinaria', { headers });
+                const response = await axios.get('https://dd3f-157-100-134-105.ngrok-free.app/veterinaria', { headers });
                 console.log('Response from API:', response.data);
 
                 setVetData(response.data);
@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         width: '100%',
         alignItems: 'center',
+        marginTop:+20,
     },
     imageContainer: {
         position: 'absolute',
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
         height: 1,
         width: '100%',
         backgroundColor: '#573321',
-        marginVertical: 20,
+        marginVertical: 10,
     },
 });
 
