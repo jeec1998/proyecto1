@@ -21,7 +21,7 @@ const UserListScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://dd3f-157-100-134-105.ngrok-free.app/user', { headers });
+                const response = await axios.get('https://e9a1-45-184-102-78.ngrok-free.app/user', { headers });
                 setUserData(response.data);
             } catch (error) {
                 console.error(error);
@@ -51,7 +51,7 @@ const UserListScreen = () => {
                 Authorization: `Bearer ${accessToken}`
             };
     
-            const url = `https://dd3f-157-100-134-105.ngrok-free.app/user/${_id}`;
+            const url = `https://e9a1-45-184-102-78.ngrok-free.app/user/${_id}`;
             console.log('URL:', url);
             console.log('Updated Data:', updatedUserData);
     
@@ -74,7 +74,7 @@ const UserListScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.delete(`https://dd3f-157-100-134-105.ngrok-free.app/user/${userId}`, { headers });
+            await axios.delete(`https://e9a1-45-184-102-78.ngrok-free.app/user/${userId}`, { headers });
             Alert.alert('Éxito', 'Usuario eliminado correctamente.');
             setUserData(userData.filter(user => user._id !== userId));
         } catch (error) {

@@ -23,7 +23,7 @@ const NormalVeterinaryListScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://dd3f-157-100-134-105.ngrok-free.app/veterinaria', { headers });
+                const response = await axios.get('https://e9a1-45-184-102-78.ngrok-free.app/veterinaria', { headers });
                 const verifiedVets = response.data.filter(vet => vet.isVerified);
                 setVetData(verifiedVets);
             } catch (error) {
@@ -52,7 +52,7 @@ const NormalVeterinaryListScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.patch(`https://dd3f-157-100-134-105.ngrok-free.app/veterinaria/${editingVetId}`, editVetData, { headers });
+            await axios.patch(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria/${editingVetId}`, editVetData, { headers });
             Alert.alert('Éxito', 'Veterinaria actualizada correctamente.');
             setVetData(vetData.map(vet => (vet._id === editingVetId ? editVetData : vet)));
             setEditingVetId(null);
@@ -73,7 +73,7 @@ const NormalVeterinaryListScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.delete(`https://dd3f-157-100-134-105.ngrok-free.app/veterinaria/${vetId}`, { headers });
+            await axios.delete(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria/${vetId}`, { headers });
             Alert.alert('Éxito', 'Veterinaria eliminada correctamente.');
             setVetData(vetData.filter(vet => vet._id !== vetId));
         } catch (error) {

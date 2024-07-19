@@ -22,7 +22,7 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://dd3f-157-100-134-105.ngrok-free.app/veterinaria/${vetId}`, { headers });
+                const response = await axios.get(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria/${vetId}`, { headers });
                 console.log('Response from API:', response.data);
 
                 setVet(response.data);

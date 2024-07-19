@@ -104,7 +104,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://dd3f-157-100-134-105.ngrok-free.app/veterinaria`, { headers });
+      const response = await axios.get(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria`, { headers });
       setVeterinaries(response.data);
     } catch (error) {
       Alert.alert('Error al cargar las ubicaciones de las veterinarias:', error.message);
@@ -122,7 +122,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`${API_URL}/2fa/generate`, { headers });
+      const response = await axios.get(`https://e9a1-45-184-102-78.ngrok-free.app/2fa/status`, { headers });
       setIs2FAEnabled(response.data.is2FAEnabled);
     } catch (error) {
       Alert.alert('Error al obtener el estado del 2FA:', error.message);
@@ -140,9 +140,10 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.post(`${API_URL}/2fa/enable`, {}, { headers });
-      setIs2FAEnabled(response.data.is2FAEnabled);
-      Alert.alert('Éxito', `Doble factor de autenticación ${response.data.is2FAEnabled ? 'activado' : 'desactivado'}`);
+      const endpoint = is2FAEnabled ? 'disable' : 'enable';
+      const response = await axios.post(`https://e9a1-45-184-102-78.ngrok-free.app/2fa/${endpoint}`, {}, { headers });
+      setIs2FAEnabled(!is2FAEnabled);
+      Alert.alert('Éxito', `Doble factor de autenticación ${!is2FAEnabled ? 'activado' : 'desactivado'}`);
     } catch (error) {
       Alert.alert('Error al cambiar el estado del 2FA:', error.message);
     }
