@@ -10,6 +10,9 @@ const ChangePasswordScreen = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigation = useNavigation();
+  const goToProfileScreen = () => {
+    navigation.navigate('Profile');
+};
 
   const handleChangePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -33,7 +36,7 @@ const ChangePasswordScreen = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await axios.patch('https://e9a1-45-184-102-78.ngrok-free.app/user/change-password', {
+      const response = await axios.patch('https://fd0a-157-100-134-105.ngrok-free.app/user/change-password', {
         currentPassword,
         newPassword,
       }, { headers });
@@ -52,9 +55,11 @@ const ChangePasswordScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.logoContainer}>
-          <Image source={Assets.logoImage} style={styles.logo} />
-        </View>
+      <TouchableOpacity  onPress={goToProfileScreen}>
+            <View style={styles.logoContainer}>
+                <Image source={Assets.logoImage} style={styles.logo} />
+            </View>
+            </TouchableOpacity>
         <View style={styles.formContainer}>
           <Text style={[styles.header, styles.textBlack]}>Cambiar Contraseña</Text>
           <TextInput

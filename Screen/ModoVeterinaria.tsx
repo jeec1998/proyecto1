@@ -39,6 +39,11 @@ const ModVeterinary = () => {
   };
 
   const handleRegister = async () => {
+    if (!veterinaryName || !description || !latitude || !longitude || !veterinaryContactNumber || !certificateImage || !vetImg) {
+      Alert.alert('Error', 'Por favor, complete todos los campos.');
+      return;
+    }
+
     const data = new FormData();
     data.append('veterinaryName', veterinaryName);
     data.append('description', description);
@@ -50,7 +55,7 @@ const ModVeterinary = () => {
       data.append('files', {
         uri: certificateImage.uri,
         type: certificateImage.type,
-        name: certificateImage.name,
+        name: 'certificateImage',
       });
     }
 
@@ -58,7 +63,7 @@ const ModVeterinary = () => {
       data.append('files', {
         uri: vetImg.uri,
         type: vetImg.type,
-        name: vetImg.name,
+        name: 'vetImg',
       });
     }
 
@@ -74,12 +79,15 @@ const ModVeterinary = () => {
         return;
       }
 
+      // Agrega el userId a los datos del formulario
+      data.append('userId', userId);
+
       const headers = {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${accessToken}`
       };
 
-      const response = await axios.post(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria`, data, { headers });
+      const response = await axios.post(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria`, data, { headers });
       Alert.alert('Registro exitoso');
       navigation.navigate('First');
     } catch (error) {

@@ -1,26 +1,37 @@
-import React, { useState } from 'react';
+// LoginScreen.js
+import React, { useState, useContext } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Assets from './Assets';
-import { API_URL } from '@env';
+import { AuthContext } from './AuthContext';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setAccessToken } = useContext(AuthContext); // Obtener la función setAccessToken del contexto
   const navigation = useNavigation();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        setPassword('');
+      };
+    }, [])
+  );
 
   const handleLogin = async () => {
     const loginData = { email, password };
     try {
-      const response = await axios.post(`https://e9a1-45-184-102-78.ngrok-free.app/auth/login`, loginData);
+      const response = await axios.post(`https://fd0a-157-100-134-105.ngrok-free.app/auth/login`, loginData);
 
       console.log('Respuesta del servidor:', response.data);
       const accessToken = response.data.data.accessToken;
 
       if (accessToken) {
         await AsyncStorage.setItem('accessToken', accessToken); // Guarda el token en AsyncStorage
+        setAccessToken(accessToken); // Guarda el token en el contexto
         Alert.alert('Login exitoso', 'Bienvenido');
         navigation.navigate('First');
       } else {

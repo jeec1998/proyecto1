@@ -21,7 +21,7 @@ const UserListScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://e9a1-45-184-102-78.ngrok-free.app/user', { headers });
+                const response = await axios.get('https://fd0a-157-100-134-105.ngrok-free.app/user', { headers });
                 setUserData(response.data);
             } catch (error) {
                 console.error(error);
@@ -51,7 +51,7 @@ const UserListScreen = () => {
                 Authorization: `Bearer ${accessToken}`
             };
     
-            const url = `https://e9a1-45-184-102-78.ngrok-free.app/user/${_id}`;
+            const url = `https://fd0a-157-100-134-105.ngrok-free.app/user/${_id}`;
             console.log('URL:', url);
             console.log('Updated Data:', updatedUserData);
     
@@ -74,7 +74,7 @@ const UserListScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.delete(`https://e9a1-45-184-102-78.ngrok-free.app/user/${userId}`, { headers });
+            await axios.delete(`https://fd0a-157-100-134-105.ngrok-free.app/user/${userId}`, { headers });
             Alert.alert('Éxito', 'Usuario eliminado correctamente.');
             setUserData(userData.filter(user => user._id !== userId));
         } catch (error) {
@@ -93,6 +93,7 @@ const UserListScreen = () => {
                 <TouchableOpacity style={styles.imageContainer} onPress={goToAdminDashboardScreen}>
                     <Image source={Assets.patitaback} style={styles.image} />
                 </TouchableOpacity>
+                <Text style={styles.header}>USUARIOS</Text>
                 {userData.map((user, index) => (
                     <View key={index} style={styles.userContainer}>
                         <View style={styles.editContainer}>
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         marginBottom: 20,
-        marginTop: 30,
+
     },
     imageContainer: {
         position: 'absolute',
@@ -163,6 +164,13 @@ const styles = StyleSheet.create({
     image: {
         width: 40,
         height: 40,
+    },
+    header: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+        color: '#573321',
     },
     name: {
         fontSize: 24,

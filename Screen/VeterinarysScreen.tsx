@@ -22,7 +22,7 @@ const VeterinarysScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://e9a1-45-184-102-78.ngrok-free.app/veterinaria', { headers });
+                const response = await axios.get('https://fd0a-157-100-134-105.ngrok-free.app/veterinaria', { headers });
                 console.log('Response from API:', response.data);
 
                 setVetData(response.data);
@@ -46,6 +46,7 @@ const VeterinarysScreen = () => {
       <TouchableOpacity style={styles.imageContainer} onPress={gotoFirstScreen}>
         <Image source={Assets.patitaback} style={styles.image} />
       </TouchableOpacity>
+      <Text style={styles.header}>VETERINARIAS</Text>
             {vetData.map((vet, index) => (
                 <View key={index} style={styles.vetContainer}>
                     <TouchableOpacity onPress={() => handleVetDetail(vet._id)}>
@@ -70,14 +71,21 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         backgroundColor: '#F1D47B',
-        padding: 20,
+        padding: 10,
         alignItems: 'center',
     },
-    vetContainer: {
+    header: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        textAlign: 'center',
         marginBottom: 20,
+        color: '#573321',
+    },
+    vetContainer: {
+        marginBottom: 1,
         width: '100%',
         alignItems: 'center',
-        marginTop:+20,
+        marginTop:+10,
     },
     imageContainer: {
         position: 'absolute',

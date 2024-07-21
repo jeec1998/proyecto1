@@ -1,31 +1,41 @@
-import React, { useEffect, useState } from 'react';
+// VeterinaryDetailScreen.js
+import React, { useEffect, useState, useContext } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Alert, Linking, TextInput } from 'react-native';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Rating } from 'react-native-ratings';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Assets from './Assets';
+import { AuthContext } from './AuthContext';
 
 const VeterinaryDetailScreen = ({ route, navigation }) => {
     const { vetId } = route.params;
     const [vet, setVet] = useState(null);
-    const [rating, setRating] = useState(0);
+    const [userRating, setUserRating] = useState(0);
+    const { accessToken } = useContext(AuthContext); 
+    const { userId } = route.params;
 
     useEffect(() => {
         const fetchVetDetail = async () => {
             try {
-                const accessToken = await AsyncStorage.getItem('accessToken');
-                if (!accessToken) {
-                    Alert.alert('Error', 'No se encontró el access token.');
+                const userId = await AsyncStorage.getItem('userId');
+                if (!accessToken || !userId) {
+                    Alert.alert('Error', 'No se encontró el access token o el ID del usuario.');
                     return;
                 }
 
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria/${vetId}`, { headers });
+                const response = await axios.get(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria/${vetId}`, { headers });
                 console.log('Response from API:', response.data);
 
                 setVet(response.data);
+                
+                const userRate = response.data.rate.find(rate => rate.userId === userId);
+                if (userRate) {
+                    setUserRating(userRate.score);
+                }
+
             } catch (error) {
                 console.error(error);
                 Alert.alert('Error', 'No se pudo obtener la información detallada de la veterinaria.');
@@ -33,11 +43,35 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
         };
 
         fetchVetDetail();
-    }, [vetId]);
+    }, [vetId, accessToken]);
 
-    const onRatingCompleted = (rating) => {
-        setRating(rating);
-        // Aquí puedes hacer cualquier cosa adicional con la calificación, como enviarla a una API
+    const onRatingCompleted = async (rating) => {
+        setUserRating(rating);
+
+        try {
+            const accesToken = await AsyncStorage.getItem('accesToken');
+            if (!accessToken ) {
+                Alert.alert('Error', 'No se encontró el access token o el ID del usuario.');
+                return;
+            }
+
+            const headers = {
+                Authorization: `Bearer ${accessToken}`
+            };
+
+            const rateData = {
+                userId: userId,
+                score: rating
+            };
+
+            const response = await axios.patch(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria/rate/${vetId}`, rateData, { headers });
+
+            setVet(response.data);
+            Alert.alert('Éxito', 'Tu calificación ha sido enviada.');
+        } catch (error) {
+            console.error(error);
+            Alert.alert('Error', 'No se pudo enviar tu calificación.');
+        }
     };
 
     if (!vet) {
@@ -69,18 +103,14 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
         });
     };
 
-    const handleNavigate = () => {
-        navigation.navigate('First', { destination: vet.location }); 
-    };
-
-    const gotoFirstScreen = () => {
-        navigation.navigate('First');
+    const goToVeterinarysScreen = () => {
+        navigation.navigate('VeterinarysScreen');
     };
 
     return (
         <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <TouchableOpacity style={styles.imageContainer} onPress={gotoFirstScreen}>
+                <TouchableOpacity style={styles.imageContainer} onPress={goToVeterinarysScreen}>
                     <Image source={Assets.patitaback} style={styles.image} />
                 </TouchableOpacity>
                 <Text style={styles.name}>{vet.veterinaryName}</Text>
@@ -90,17 +120,18 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
                         style={styles.vetImage} 
                     />
                 )}
+
                 <Rating
-                    startingValue={0}
+                    startingValue={userRating}
                     showRating
                     type='custom'
                     onFinishRating={onRatingCompleted}
                     style={styles.starRatingContainer}
                     imageSize={40}
                     tintColor="#F1D47B"
-                    ratingColor="#573321" // Color de las estrellas cuando no están seleccionadas
-                    selectedColor="#573321" // Color de las estrellas cuando se seleccionan
-                    ratingTextColor="#000000" // Color del texto del ranking
+                    ratingColor="#573321"
+                    selectedColor="#573321"
+                    ratingTextColor="#000000"
                 />
                 <TextInput
                     style={styles.descriptionInput}
@@ -117,9 +148,6 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.smallButton} onPress={handleCall}>
                     <Text style={styles.buttonText}>Llamar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.smallButton} onPress={handleNavigate}>
-                    <Text style={styles.buttonText}>IR</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -144,10 +172,10 @@ const styles = StyleSheet.create({
     },
     vetImage: {
         width: '100%',
-        height: 300, // Ajusta la altura para mejorar la visibilidad de la imagen
+        height: 300,
         resizeMode: 'cover',
         marginBottom: 10,
-        borderRadius: 10, // Opcional: para dar bordes redondeados a la imagen
+        borderRadius: 10,
     },
     descriptionInput: {
         width: '100%',
@@ -157,6 +185,12 @@ const styles = StyleSheet.create({
     },
     starRatingContainer: {
         marginVertical: 5,
+    },
+    averageScoreText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: '#573321',
     },
     text: {
         fontSize: 16,

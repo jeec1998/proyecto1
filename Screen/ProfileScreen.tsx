@@ -14,6 +14,9 @@ const ProfileScreen = () => {
         phoneNumber: ''
     });
     const navigation = useNavigation();
+    const goToFirstScren = () => {
+        navigation.navigate('First');
+    };
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -27,7 +30,7 @@ const ProfileScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://e9a1-45-184-102-78.ngrok-free.app/user/me', { headers });
+                const response = await axios.get('https://fd0a-157-100-134-105.ngrok-free.app/user/me', { headers });
                 console.log('Response from API:', response.data);
 
                 const { _id, firstName, lastName, email, phoneNumber } = response.data;
@@ -62,7 +65,7 @@ const ProfileScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.patch('https://e9a1-45-184-102-78.ngrok-free.app/user/me', updatedUserData, { headers });
+            await axios.patch('https://fd0a-157-100-134-105.ngrok-free.app/user/me', updatedUserData, { headers });
             Alert.alert('Actualización exitosa', 'La información del usuario ha sido actualizada.');
         } catch (error) {
             console.error('Error updating user data:', error);
@@ -76,9 +79,11 @@ const ProfileScreen = () => {
 
     return (
         <View style={styles.container}>
+               <TouchableOpacity  onPress={goToFirstScren}>
             <View style={styles.logoContainer}>
                 <Image source={Assets.logoImage} style={styles.logo} />
             </View>
+            </TouchableOpacity>
             <View style={styles.formContainer}>
             <Text style={styles.header}>Información Personal</Text>
                 <TextInput

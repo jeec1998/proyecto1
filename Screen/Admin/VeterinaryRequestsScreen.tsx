@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, Image, ScrollView, KeyboardAvoidingView, Platform, Linking } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,7 +23,7 @@ const VeterinaryRequestsScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://e9a1-45-184-102-78.ngrok-free.app/veterinaria', { headers });
+                const response = await axios.get('https://fd0a-157-100-134-105.ngrok-free.app/veterinaria', { headers });
                 const unverifiedVets = response.data.filter(vet => !vet.isVerified);
                 setVetData(unverifiedVets);
             } catch (error) {
@@ -52,7 +52,7 @@ const VeterinaryRequestsScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.patch(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria/${editingVetId}`, editVetData, { headers });
+            await axios.patch(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria/${editingVetId}`, editVetData, { headers });
             Alert.alert('Éxito', 'Veterinaria actualizada correctamente.');
             setVetData(vetData.map(vet => (vet._id === editingVetId ? editVetData : vet)));
             setEditingVetId(null);
@@ -73,7 +73,7 @@ const VeterinaryRequestsScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.delete(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria/${vetId}`, { headers });
+            await axios.delete(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria/${vetId}`, { headers });
             Alert.alert('Éxito', 'Veterinaria eliminada correctamente.');
             setVetData(vetData.filter(vet => vet._id !== vetId));
         } catch (error) {
@@ -93,7 +93,7 @@ const VeterinaryRequestsScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.patch(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria/${vetId}`, { isVerified: true }, { headers });
+            await axios.patch(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria/${vetId}`, { isVerified: true }, { headers });
             Alert.alert('Éxito', 'Veterinaria verificada correctamente.');
             setVetData(vetData.map(vet => (vet._id === vetId ? { ...vet, isVerified: true } : vet)));
         } catch (error) {
@@ -112,6 +112,7 @@ const VeterinaryRequestsScreen = () => {
                 <TouchableOpacity style={styles.imageContainer} onPress={goToAdminDashboardScreen}>
                     <Image source={Assets.patitaback} style={styles.image} />
                 </TouchableOpacity>
+                <Text style={styles.header}>SOLICITUDES</Text>
                 {vetData.map((vet, index) => (
                     <View key={index} style={styles.vetContainer}>
                         {editingVetId === vet._id ? (
@@ -135,20 +136,6 @@ const VeterinaryRequestsScreen = () => {
                                     placeholder="Número de contacto"
                                     keyboardType="phone-pad"
                                 />
-                                <TextInput
-                                    style={styles.input}
-                                    value={editVetData.latitude}
-                                    onChangeText={(text) => setEditVetData({ ...editVetData, latitude: text })}
-                                    placeholder="Latitud"
-                                    keyboardType="decimal-pad"
-                                />
-                                <TextInput
-                                    style={styles.input}
-                                    value={editVetData.longitude}
-                                    onChangeText={(text) => setEditVetData({ ...editVetData, longitude: text })}
-                                    placeholder="Longitud"
-                                    keyboardType="decimal-pad"
-                                />
                                 <View style={styles.buttonContainer}>
                                     <TouchableOpacity style={styles.button} onPress={handleSave}>
                                         <Text style={styles.buttonText}>Guardar</Text>
@@ -160,25 +147,28 @@ const VeterinaryRequestsScreen = () => {
                             </View>
                         ) : (
                             <View>
-                                <TouchableOpacity onPress={() => handleEdit(vet._id)}>
-                                    <Text style={styles.name}>{vet.veterinaryName}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => handleEdit(vet._id)}>
-                                    {vet.imagVet && (
-                                        <Image 
-                                            source={{ uri: vet.imagVet }} 
-                                            style={styles.vetImage} 
-                                        />
-                                    )}
-                                </TouchableOpacity>
+                                <Text style={styles.name}>{vet.veterinaryName}</Text>
+                                {vet.imagVet && (
+                                    <Image 
+                                        source={{ uri: vet.imagVet }} 
+                                        style={styles.vetImage} 
+                                    />
+                                )}
+                                <Text style={styles.name}>Certificado</Text>
+                                {vet.certificatePdf && (
+                                    <Image 
+                                        source={{ uri: vet.certificatePdf }} 
+                                        style={styles.vetImage} 
+                                    />
+                                )}
                                 <Text style={styles.description}>{vet.description}</Text>
                                 <Text style={styles.contactNumber}>Contacto: {vet.veterinaryContactNumber}</Text>
                                 <Text style={styles.location}>Ubicación: {vet.latitude}, {vet.longitude}</Text>
                                 <Text style={styles.verified}>Verificado: {vet.isVerified ? 'Sí' : 'No'}</Text>
-                                <TouchableOpacity onPress={() => Linking.openURL(vet.certificatePdf)}>
-                                    <Text style={styles.certificate}>Ver Certificado</Text>
-                                </TouchableOpacity>
                                 <View style={styles.buttonContainer}>
+                                    <TouchableOpacity style={[styles.button, styles.editButton]} onPress={() => handleEdit(vet._id)}>
+                                        <Text style={styles.buttonText}>Editar</Text>
+                                    </TouchableOpacity>
                                     <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={() => handleDeleteVet(vet._id)}>
                                         <Text style={styles.buttonText}>Eliminar</Text>
                                     </TouchableOpacity>
@@ -212,6 +202,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         marginBottom: 20,
+
     },
     imageContainer: {
         position: 'absolute',
@@ -234,12 +225,20 @@ const styles = StyleSheet.create({
         height: 300,
         resizeMode: 'cover',
         marginBottom: 10,
+        alignSelf: 'center',  // Center the image horizontally
     },
     description: {
         fontSize: 16,
         color: '#573321',
         marginBottom: 10,
         textAlign: 'center',
+    },
+    header: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+        color: '#573321',
     },
     contactNumber: {
         fontSize: 16,
@@ -268,16 +267,18 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between', // Ensure buttons are spaced apart
         width: '100%',
         marginTop: 10,
+        flexWrap: 'wrap', // Allow buttons to wrap to new lines if needed
     },
     button: {
         backgroundColor: '#573321',
         padding: 10,
         borderRadius: 5,
-        width: '40%',
+        width: '30%', // Adjust width to prevent overlapping
         alignItems: 'center',
+        marginVertical: 5,
     },
     deleteButton: {
         backgroundColor: '#B22222',
@@ -287,6 +288,9 @@ const styles = StyleSheet.create({
     },
     verifyButton: {
         backgroundColor: '#32CD32',
+    },
+    editButton: {
+        backgroundColor: '#FFA500',
     },
     buttonText: {
         color: '#FFFFFF',

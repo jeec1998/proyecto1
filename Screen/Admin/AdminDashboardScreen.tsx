@@ -1,11 +1,18 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity,Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Assets from '../Assets';
 
 const AdminDashboardScreen = () => {
   const navigation = useNavigation();
+  const goToFirstScren = () => {
+    navigation.navigate('First');
+};
   return (
     <View style={styles.container}>
+        <TouchableOpacity style={styles.imageContainer} onPress={goToFirstScren}>
+                    <Image source={Assets.patitaback} style={styles.image} />
+        </TouchableOpacity>
       <Text style={styles.header}>Panel de Administrador</Text>
       <View style={styles.formContainer}>
         <TouchableOpacity
@@ -66,6 +73,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  image: {
+    width: 40,
+    height: 40,
+},
+imageContainer: {
+  position: 'absolute',
+  top: 10,
+  left: 10,
+},
 });
 
 export default AdminDashboardScreen;

@@ -104,7 +104,7 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria`, { headers });
+      const response = await axios.get(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria`, { headers });
       setVeterinaries(response.data);
     } catch (error) {
       Alert.alert('Error al cargar las ubicaciones de las veterinarias:', error.message);
@@ -122,8 +122,8 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://e9a1-45-184-102-78.ngrok-free.app/2fa/status`, { headers });
-      setIs2FAEnabled(response.data.is2FAEnabled);
+      const response = await axios.get(`https://fd0a-157-100-134-105.ngrok-free.app/user/me`, { headers });
+      setIs2FAEnabled(response.data.isTwoFactorAuthenticationEnabled);
     } catch (error) {
       Alert.alert('Error al obtener el estado del 2FA:', error.message);
     }
@@ -141,7 +141,7 @@ const FirstScreen = () => {
         Authorization: `Bearer ${accessToken}`
       };
       const endpoint = is2FAEnabled ? 'disable' : 'enable';
-      const response = await axios.post(`https://e9a1-45-184-102-78.ngrok-free.app/2fa/${endpoint}`, {}, { headers });
+      const response = await axios.post(`https://fd0a-157-100-134-105.ngrok-free.app/2fa/${endpoint}`, {}, { headers });
       setIs2FAEnabled(!is2FAEnabled);
       Alert.alert('Éxito', `Doble factor de autenticación ${!is2FAEnabled ? 'activado' : 'desactivado'}`);
     } catch (error) {
@@ -150,9 +150,14 @@ const FirstScreen = () => {
   };
 
   const logout = async () => {
-    await AsyncStorage.removeItem('accessToken');
-    navigation.navigate('FirstScreen');
-  };
+    try {
+        await AsyncStorage.removeItem('accessToken');
+        navigation.navigate('Login');
+    } catch (error) {
+        Alert.alert('Error', 'No se pudo cerrar la sesión.');
+    }
+};
+
 
   const filteredVeterinaries = veterinaries.filter(vet =>
     vet.veterinaryName.toLowerCase().includes(search.toLowerCase())
@@ -161,9 +166,11 @@ const FirstScreen = () => {
   const goToProfileScreen = () => {
     navigation.navigate('Profile');
   };
-  const goToFirstScren= () => {
+
+  const goToFirstScren = () => {
     navigation.navigate('First');
   };
+
   const goToModVeterinary = () => {
     navigation.navigate('ModVeterinary');
   };
@@ -179,13 +186,15 @@ const FirstScreen = () => {
   const goToLoginScreen = () => {
     navigation.navigate('Login');
   };
+
   const goToAdminDashboardScreen = () => {
     navigation.navigate('AdminDashboardScreen');
   };
+
   const goToVeterinaryManagementScreen = async () => {
     try {
-      const userId = await AsyncStorage.getItem('userId'); // Obtén el userId del almacenamiento
-      navigation.navigate('VeterinaryManagementScreen', { userId }); // Navega pasando el userId como parámetro
+      const userId = await AsyncStorage.getItem('userId');
+      navigation.navigate('VeterinaryManagementScreen', { userId });
     } catch (error) {
       Alert.alert('Error', 'No se pudo obtener el userId.');
     }
@@ -284,22 +293,18 @@ const FirstScreen = () => {
                 <Text style={styles.menuItem}>{is2FAEnabled ? 'Desactivar' : 'Activar'} 2FA</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToModVeterinary}>
-              <Text style={styles.modeVeterinariaText}>Modo Veterinaria</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToVeterinaryManagementScreen}>
-              <Text style={styles.modeVeterinariaText}>Mi Veterinaria</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToFirstScren}>
-              <Text style={styles.modeVeterinariaText}>Modo Usuario</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToAdminDashboardScreen}>
-              <Text style={styles.modeVeterinariaText}>Modo Admin</Text>
-            </TouchableOpacity>
-            
-            </View>
-            <TouchableOpacity onPress={goToLoginScreen} style={styles.logoutButton}>
-                <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+                <Text style={styles.modeVeterinariaText}>Modo Veterinaria</Text>
               </TouchableOpacity>
+              <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToVeterinaryManagementScreen}>
+                <Text style={styles.modeVeterinariaText}>Mi Veterinaria</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToAdminDashboardScreen}>
+                <Text style={styles.modeVeterinariaText}>Modo Admin</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={logout} style={styles.logoutButton}>
+              <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+            </TouchableOpacity>
           </View>
         </TouchableOpacity>
       </Modal>

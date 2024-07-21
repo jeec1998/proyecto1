@@ -23,7 +23,7 @@ const NormalVeterinaryListScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://e9a1-45-184-102-78.ngrok-free.app/veterinaria', { headers });
+                const response = await axios.get('https://fd0a-157-100-134-105.ngrok-free.app/veterinaria', { headers });
                 const verifiedVets = response.data.filter(vet => vet.isVerified);
                 setVetData(verifiedVets);
             } catch (error) {
@@ -52,7 +52,12 @@ const NormalVeterinaryListScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.patch(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria/${editingVetId}`, editVetData, { headers });
+            const body = {
+                veterinaryName: editVetData.veterinaryName,
+                description: editVetData.description,
+                veterinaryContactNumber: editVetData.veterinaryContactNumber,
+            };
+            await axios.patch(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria/${editingVetId}`, body, { headers });
             Alert.alert('Éxito', 'Veterinaria actualizada correctamente.');
             setVetData(vetData.map(vet => (vet._id === editingVetId ? editVetData : vet)));
             setEditingVetId(null);
@@ -73,7 +78,7 @@ const NormalVeterinaryListScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.delete(`https://e9a1-45-184-102-78.ngrok-free.app/veterinaria/${vetId}`, { headers });
+            await axios.delete(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria/${vetId}`, { headers });
             Alert.alert('Éxito', 'Veterinaria eliminada correctamente.');
             setVetData(vetData.filter(vet => vet._id !== vetId));
         } catch (error) {
@@ -92,6 +97,7 @@ const NormalVeterinaryListScreen = () => {
                 <TouchableOpacity style={styles.imageContainer} onPress={goToAdminDashboardScreen}>
                     <Image source={Assets.patitaback} style={styles.image} />
                 </TouchableOpacity>
+                <Text style={styles.header}>VETERINARIAS</Text>
                 {vetData.map((vet, index) => (
                     <View key={index} style={styles.vetContainer}>
                         {editingVetId === vet._id ? (
@@ -127,17 +133,17 @@ const NormalVeterinaryListScreen = () => {
                             </View>
                         ) : (
                             <View>
-                                <TouchableOpacity onPress={() => handleEdit(vet._id)}>
+                         
                                     <Text style={styles.name}>{vet.veterinaryName}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => handleEdit(vet._id)}>
+                              
+                           
                                     {vet.imagVet && (
                                         <Image 
                                             source={{ uri: vet.imagVet }} 
                                             style={styles.vetImage} 
                                         />
                                     )}
-                                </TouchableOpacity>
+                           
                                 <Text style={styles.description}>{vet.description}</Text>
                                 <Text style={styles.contactNumber}>Contacto: {vet.veterinaryContactNumber}</Text>
                                 <Text style={styles.location}>Ubicación: {vet.latitude}, {vet.longitude}</Text>
@@ -174,11 +180,19 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         marginBottom: 20,
+
     },
     imageContainer: {
         position: 'absolute',
         top: 10,
         left: 10,
+    },
+    header: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+        color: '#573321',
     },
     image: {
         width: 40,

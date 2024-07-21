@@ -16,17 +16,18 @@ import ChangePasswordScreen from './ChangePasswordScreen';
 import VeterinaryRequestsScreen from './Admin/VeterinaryRequestsScreen';
 import NormalVeterinaryListScreen from './Admin/NormalVeterinaryListScreen';
 import AdminDashboardScreen from './Admin/AdminDashboardScreen';
-import TopVetScreen from './TopVetScreen';
+import TopVetScreen from './TopRatedVetsScreen';
 import MapComponent from './MapComponent';
 import UserListScreen from './Admin/UserListScreen';
 import VeterinaryManagementScreen from './Veterinary/VeterinaryManagementScreen';
+import { AuthProvider } from './AuthContext';
 
 
 const Stack = createStackNavigator();
 
 function App() {
   return (
-  
+  <AuthProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Home" component={HomeScreen} />
@@ -49,7 +50,7 @@ function App() {
         <Stack.Screen name="TopVet" component={TopVetScreen} />
         </Stack.Navigator>
       </NavigationContainer>
-  
+      </AuthProvider>
   );
 }
 
