@@ -67,7 +67,7 @@ const NormalVeterinaryListScreen = () => {
         }
     };
 
-    const handleDeleteVet = async (vetId) => {
+    const handleDeleteVet = async (vetId, userId) => {
         try {
             const accessToken = await AsyncStorage.getItem('accessToken');
             if (!accessToken) {
@@ -79,6 +79,7 @@ const NormalVeterinaryListScreen = () => {
                 Authorization: `Bearer ${accessToken}`
             };
             await axios.delete(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria/${vetId}`, { headers });
+            await axios.patch(`https://fd0a-157-100-134-105.ngrok-free.app/user/${userId}`, { isVetAdmin: false }, { headers });
             Alert.alert('Éxito', 'Veterinaria eliminada correctamente.');
             setVetData(vetData.filter(vet => vet._id !== vetId));
         } catch (error) {
@@ -152,7 +153,7 @@ const NormalVeterinaryListScreen = () => {
                                     <TouchableOpacity style={styles.button} onPress={() => handleEdit(vet._id)}>
                                         <Text style={styles.buttonText}>Actualizar</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={() => handleDeleteVet(vet._id)}>
+                                    <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={() => handleDeleteVet(vet._id, vet.userId)}>
                                         <Text style={styles.buttonText}>Eliminar</Text>
                                     </TouchableOpacity>
                                 </View>

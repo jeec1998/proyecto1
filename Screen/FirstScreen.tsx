@@ -18,9 +18,10 @@ const FirstScreen = () => {
   });
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [veterinaries, setVeterinaries] = useState([]);
-  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(location);
   const [locationUpdateInterval, setLocationUpdateInterval] = useState(null);
+  const [isVetAdmin, setIsVetAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
   const mapRef = useRef(null);
@@ -28,7 +29,7 @@ const FirstScreen = () => {
   useEffect(() => {
     requestLocationPermission();
     fetchVeterinaries();
-    fetch2FAStatus();
+    fetchUserRoles();
 
     const locationWatcher = Geolocation.watchPosition(
       (position) => {
@@ -50,8 +51,13 @@ const FirstScreen = () => {
       }
     );
 
+    const rolesInterval = setInterval(fetchUserRoles, 5000); // Polling cada 5 segundos
+    const veterinariesInterval = setInterval(fetchVeterinaries, 5000); // Polling cada 5 segundos
+
     return () => {
       Geolocation.clearWatch(locationWatcher);
+      clearInterval(rolesInterval);
+      clearInterval(veterinariesInterval);
     };
   }, []);
 
@@ -111,7 +117,8 @@ const FirstScreen = () => {
     }
   };
 
-  const fetch2FAStatus = async () => {
+
+  const fetchUserRoles = async () => {
     try {
       const accessToken = await AsyncStorage.getItem('accessToken');
       if (!accessToken) {
@@ -122,30 +129,11 @@ const FirstScreen = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`
       };
-      const response = await axios.get(`https://fd0a-157-100-134-105.ngrok-free.app/user/me`, { headers });
-      setIs2FAEnabled(response.data.isTwoFactorAuthenticationEnabled);
+      const response = await axios.get('https://fd0a-157-100-134-105.ngrok-free.app/user/me', { headers });
+      setIsVetAdmin(response.data.isVetAdmin);
+      setIsSuperAdmin(response.data.isSuperAdmin);
     } catch (error) {
-      Alert.alert('Error al obtener el estado del 2FA:', error.message);
-    }
-  };
-
-  const toggle2FA = async () => {
-    try {
-      const accessToken = await AsyncStorage.getItem('accessToken');
-      if (!accessToken) {
-        Alert.alert('Error', 'No se encontró el access token.');
-        return;
-      }
-
-      const headers = {
-        Authorization: `Bearer ${accessToken}`
-      };
-      const endpoint = is2FAEnabled ? 'disable' : 'enable';
-      const response = await axios.post(`https://fd0a-157-100-134-105.ngrok-free.app/2fa/${endpoint}`, {}, { headers });
-      setIs2FAEnabled(!is2FAEnabled);
-      Alert.alert('Éxito', `Doble factor de autenticación ${!is2FAEnabled ? 'activado' : 'desactivado'}`);
-    } catch (error) {
-      Alert.alert('Error al cambiar el estado del 2FA:', error.message);
+      Alert.alert('Error al obtener los roles del usuario:', error.message);
     }
   };
 
@@ -160,7 +148,7 @@ const FirstScreen = () => {
 
 
   const filteredVeterinaries = veterinaries.filter(vet =>
-    vet.veterinaryName.toLowerCase().includes(search.toLowerCase())
+    vet.veterinaryName.toLowerCase().includes(search.toLowerCase()) && vet.isVerified
   );
 
   const goToProfileScreen = () => {
@@ -289,18 +277,38 @@ const FirstScreen = () => {
               <TouchableOpacity onPress={goToTopVetScreen}>
                 <Text style={styles.menuItem}>Top5</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={toggle2FA}>
-                <Text style={styles.menuItem}>{is2FAEnabled ? 'Desactivar' : 'Activar'} 2FA</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToModVeterinary}>
-                <Text style={styles.modeVeterinariaText}>Modo Veterinaria</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToVeterinaryManagementScreen}>
-                <Text style={styles.modeVeterinariaText}>Mi Veterinaria</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToAdminDashboardScreen}>
-                <Text style={styles.modeVeterinariaText}>Modo Admin</Text>
-              </TouchableOpacity>
+       
+              {(!isVetAdmin && !isSuperAdmin) && (
+                <>
+                  <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToModVeterinary}>
+                    <Text style={styles.modeVeterinariaText}>Modo Veterinaria</Text>
+                  </TouchableOpacity>
+
+                </>
+              )}
+              {isVetAdmin && !isSuperAdmin && (
+                  <>
+                  <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToModVeterinary}>
+                    <Text style={styles.modeVeterinariaText}>Modo Veterinaria</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToVeterinaryManagementScreen}>
+                    <Text style={styles.modeVeterinariaText}>Mi Veterinaria</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+              {isSuperAdmin && (
+                <>
+                  <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToModVeterinary}>
+                    <Text style={styles.modeVeterinariaText}>Modo Veterinaria</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToVeterinaryManagementScreen}>
+                    <Text style={styles.modeVeterinariaText}>Mi Veterinaria</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.modeVeterinariaButton} onPress={goToAdminDashboardScreen}>
+                    <Text style={styles.modeVeterinariaText}>Modo Admin</Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
             <TouchableOpacity onPress={logout} style={styles.logoutButton}>
               <Text style={styles.logoutButtonText}>Cerrar sesión</Text>

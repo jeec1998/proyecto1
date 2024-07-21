@@ -82,7 +82,7 @@ const VeterinaryRequestsScreen = () => {
         }
     };
 
-    const handleVerify = async (vetId) => {
+    const handleVerify = async (vetId, userId) => {
         try {
             const accessToken = await AsyncStorage.getItem('accessToken');
             if (!accessToken) {
@@ -94,8 +94,10 @@ const VeterinaryRequestsScreen = () => {
                 Authorization: `Bearer ${accessToken}`
             };
             await axios.patch(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria/${vetId}`, { isVerified: true }, { headers });
+            await axios.patch(`https://fd0a-157-100-134-105.ngrok-free.app/user/${userId}`, { isVetAdmin: true }, { headers });
             Alert.alert('Éxito', 'Veterinaria verificada correctamente.');
             setVetData(vetData.map(vet => (vet._id === vetId ? { ...vet, isVerified: true } : vet)));
+      
         } catch (error) {
             console.error(error);
             Alert.alert('Error', 'No se pudo verificar la veterinaria.');
@@ -173,7 +175,7 @@ const VeterinaryRequestsScreen = () => {
                                         <Text style={styles.buttonText}>Eliminar</Text>
                                     </TouchableOpacity>
                                     {!vet.isVerified && (
-                                        <TouchableOpacity style={[styles.button, styles.verifyButton]} onPress={() => handleVerify(vet._id)}>
+                                        <TouchableOpacity style={[styles.button, styles.verifyButton]} onPress={() => handleVerify(vet._id, vet.userId)}>
                                             <Text style={styles.buttonText}>Verificar</Text>
                                         </TouchableOpacity>
                                     )}
@@ -202,7 +204,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         marginBottom: 20,
-
+        marginTop: +25,
     },
     imageContainer: {
         position: 'absolute',
