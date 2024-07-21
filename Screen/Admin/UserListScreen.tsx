@@ -82,7 +82,7 @@ const UserListScreen = () => {
             Alert.alert('Error', 'No se pudo eliminar el usuario.');
         }
     };
-
+ 
     const goToAdminDashboardScreen = () => {
         navigation.navigate('AdminDashboardScreen');
     };

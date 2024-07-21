@@ -13,7 +13,9 @@ const ProfileScreen = () => {
         email: '',
         phoneNumber: ''
     });
+    const [is2FAEnabled, setIs2FAEnabled] = useState(false); // Estado para 2FA
     const navigation = useNavigation();
+
     const goToFirstScren = () => {
         navigation.navigate('First');
     };
@@ -33,8 +35,9 @@ const ProfileScreen = () => {
                 const response = await axios.get('https://fd0a-157-100-134-105.ngrok-free.app/user/me', { headers });
                 console.log('Response from API:', response.data);
 
-                const { _id, firstName, lastName, email, phoneNumber } = response.data;
+                const { _id, firstName, lastName, email, phoneNumber, isTwoFactorAuthenticationEnabled } = response.data;
                 setUserData({ userId: _id, firstName, lastName, email, phoneNumber });
+                setIs2FAEnabled(isTwoFactorAuthenticationEnabled); // Actualizar estado de 2FA
 
                 // Guardar el ID del usuario en AsyncStorage
                 await AsyncStorage.setItem('userId', _id);
@@ -77,15 +80,39 @@ const ProfileScreen = () => {
         navigation.navigate('ChangePasswordScreen');
     };
 
+    const handleEnable2FA = async () => {
+        try {
+            const accessToken = await AsyncStorage.getItem('accessToken');
+            if (!accessToken) {
+                Alert.alert('Error', 'No se encontró el access token.');
+                return;
+            }
+
+            const headers = {
+                Authorization: `Bearer ${accessToken}`
+            };
+            const response = await axios.post('https://fd0a-157-100-134-105.ngrok-free.app/2fa/enable', {}, { headers });
+            if (response.data.success) {
+                setIs2FAEnabled(true); // Actualizar estado de 2FA
+                Alert.alert('2FA Activada', 'La autenticación de dos factores ha sido activada exitosamente.');
+            } else {
+                Alert.alert('Error', 'No se pudo activar la autenticación de dos factores.');
+            }
+        } catch (error) {
+            console.error('Error enabling 2FA:', error);
+            Alert.alert('Error', 'Hubo un problema al activar la autenticación de dos factores.');
+        }
+    };
+
     return (
         <View style={styles.container}>
-               <TouchableOpacity  onPress={goToFirstScren}>
-            <View style={styles.logoContainer}>
-                <Image source={Assets.logoImage} style={styles.logo} />
-            </View>
+            <TouchableOpacity onPress={goToFirstScren}>
+                <View style={styles.logoContainer}>
+                    <Image source={Assets.logoImage} style={styles.logo} />
+                </View>
             </TouchableOpacity>
             <View style={styles.formContainer}>
-            <Text style={styles.header}>Información Personal</Text>
+                <Text style={styles.header}>Información Personal</Text>
                 <TextInput
                     style={[styles.input, styles.textBlack]}
                     placeholder="Nombre"
@@ -116,6 +143,11 @@ const ProfileScreen = () => {
                 <TouchableOpacity style={styles.button} onPress={handleUpdate}>
                     <Text style={styles.buttonText}>Actualizar</Text>
                 </TouchableOpacity>
+                {!is2FAEnabled && (
+                    <TouchableOpacity style={styles.button} onPress={handleEnable2FA}>
+                        <Text style={styles.buttonText}>Activar 2FA</Text>
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );
@@ -133,7 +165,7 @@ const styles = StyleSheet.create({
         marginTop: -150,
     },
     logo: {
-        width: 500, // Agrandar el logo
+        width: 500,
         height: 500,
         resizeMode: 'contain',
     },
