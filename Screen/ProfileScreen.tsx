@@ -32,7 +32,7 @@ const ProfileScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://fd0a-157-100-134-105.ngrok-free.app/user/me', { headers });
+                const response = await axios.get('https://e0b2-2800-bf0-2401-38c-e4bb-98c1-2836-d32e.ngrok-free.app/user/me', { headers });
                 console.log('Response from API:', response.data);
 
                 const { _id, firstName, lastName, email, phoneNumber, isTwoFactorAuthenticationEnabled } = response.data;
@@ -68,7 +68,7 @@ const ProfileScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.patch('https://fd0a-157-100-134-105.ngrok-free.app/user/me', updatedUserData, { headers });
+            await axios.patch('https://e0b2-2800-bf0-2401-38c-e4bb-98c1-2836-d32e.ngrok-free.app/user/me', updatedUserData, { headers });
             Alert.alert('Actualización exitosa', 'La información del usuario ha sido actualizada.');
         } catch (error) {
             console.error('Error updating user data:', error);
@@ -91,7 +91,7 @@ const ProfileScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            const response = await axios.post(`https://fd0a-157-100-134-105.ngrok-free.app/2fa/enable`, {}, { headers });
+            const response = await axios.post(`https://e0b2-2800-bf0-2401-38c-e4bb-98c1-2836-d32e.ngrok-free.app/2fa/enable`, {}, { headers });
             if (response.data.success) {
                 setIs2FAEnabled(true); // Actualizar estado de 2FA
                 Alert.alert('2FA Activada', 'La autenticación de dos factores ha sido activada exitosamente.');
@@ -143,11 +143,11 @@ const ProfileScreen = () => {
                 <TouchableOpacity style={styles.button} onPress={handleUpdate}>
                     <Text style={styles.buttonText}>Actualizar</Text>
                 </TouchableOpacity>
-                {!is2FAEnabled && (
+       {/*          {!is2FAEnabled && (
                     <TouchableOpacity style={styles.button} onPress={handleEnable2FA}>
                         <Text style={styles.buttonText}>Activar 2FA</Text>
                     </TouchableOpacity>
-                )}
+                )} */}
             </View>
         </View>
     );

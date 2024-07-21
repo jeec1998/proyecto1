@@ -30,11 +30,13 @@ const MapComponent = forwardRef(({ location, selectedDestination, setSelectedDes
         {veterinaries.map((veterinary, index) => (
           <Marker
             key={index}
+
+            
             coordinate={{
               latitude: veterinary.latitude,
               longitude: veterinary.longitude,
             }}
-            icon={Assets.patitaback} // Ajusta esta ruta según tu estructura de proyecto
+            icon={Assets.patitaback1} // Ajusta esta ruta según tu estructura de proyecto
             onPress={() => handleMarkerPress(veterinary)}
           >
             <Callout onPress={() => handleMarkerPress(veterinary)}>
