@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Rating } from 'react-native-ratings';
 import { AuthContext } from './AuthContext';
 import Assets from './Assets';
+import { API_URL } from '@env';
 
 const TopRatedVetsScreen = ({ navigation }) => {
     const [topVets, setTopVets] = useState([]);
@@ -24,7 +25,7 @@ const TopRatedVetsScreen = ({ navigation }) => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://fd0a-157-100-134-105.ngrok-free.app/veterinaria/top-rated', { headers });
+                const response = await axios.get(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria/top-rated`, { headers });
                 console.log('Response from API:', response.data);
 
                 setTopVets(response.data);

@@ -6,6 +6,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Assets from './Assets';
 import { AuthContext } from './AuthContext';
+import { API_URL } from '@env';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');

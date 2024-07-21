@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Assets from '../Assets';
-
+import { API_URL } from '@env';
 const VeterinaryManagementScreen = () => {
     const [vetData, setVetData] = useState([]);
     const [editingVetId, setEditingVetId] = useState(null);

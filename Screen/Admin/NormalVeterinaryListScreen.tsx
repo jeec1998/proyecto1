@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Assets from '../Assets';
+import { API_URL } from '@env';
 
 const NormalVeterinaryListScreen = () => {
     const [vetData, setVetData] = useState([]);
@@ -23,7 +24,7 @@ const NormalVeterinaryListScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get('https://fd0a-157-100-134-105.ngrok-free.app/veterinaria', { headers });
+                const response = await axios.get(`https://fd0a-157-100-134-105.ngrok-free.app/veterinaria`, { headers });
                 const verifiedVets = response.data.filter(vet => vet.isVerified);
                 setVetData(verifiedVets);
             } catch (error) {

@@ -21,7 +21,7 @@ import MapComponent from './MapComponent';
 import UserListScreen from './Admin/UserListScreen';
 import VeterinaryManagementScreen from './Veterinary/VeterinaryManagementScreen';
 import { AuthProvider } from './AuthContext';
-
+import { API_URL } from '@env';
 
 const Stack = createStackNavigator();
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity,Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Assets from '../Assets';
+import { API_URL } from '@env';
 
 const AdminDashboardScreen = () => {
   const navigation = useNavigation();

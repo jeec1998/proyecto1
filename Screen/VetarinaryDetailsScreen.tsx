@@ -6,7 +6,7 @@ import { Rating } from 'react-native-ratings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Assets from './Assets';
 import { AuthContext } from './AuthContext';
-
+import { API_URL } from '@env';
 const VeterinaryDetailScreen = ({ route, navigation }) => {
     const { vetId } = route.params;
     const [vet, setVet] = useState(null);

@@ -91,7 +91,7 @@ const ProfileScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            const response = await axios.post('https://fd0a-157-100-134-105.ngrok-free.app/2fa/enable', {}, { headers });
+            const response = await axios.post(`https://fd0a-157-100-134-105.ngrok-free.app/2fa/enable`, {}, { headers });
             if (response.data.success) {
                 setIs2FAEnabled(true); // Actualizar estado de 2FA
                 Alert.alert('2FA Activada', 'La autenticación de dos factores ha sido activada exitosamente.');

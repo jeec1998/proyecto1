@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Assets from './Assets';
-
+import { API_URL } from '@env';
 const ChangePasswordScreen = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -36,7 +36,7 @@ const ChangePasswordScreen = () => {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await axios.patch('https://fd0a-157-100-134-105.ngrok-free.app/user/change-password', {
+      const response = await axios.patch(`https://fd0a-157-100-134-105.ngrok-free.app/user/change-password`, {
         currentPassword,
         newPassword,
       }, { headers });
