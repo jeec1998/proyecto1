@@ -87,7 +87,7 @@ const ModVeterinary = () => {
         'Authorization': `Bearer ${accessToken}`
       };
 
-      const response = await axios.post(`https://08c2-181-199-59-134.ngrok-free.app/veterinaria`, data, { headers });
+      const response = await axios.post(`https://5394-45-184-102-76.ngrok-free.app/veterinaria`, data, { headers });
       Alert.alert('Registro exitoso');
       navigation.navigate('First');
     } catch (error) {

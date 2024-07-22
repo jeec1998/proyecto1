@@ -22,7 +22,7 @@ const UserListScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://08c2-181-199-59-134.ngrok-free.app/user`, { headers });
+                const response = await axios.get(`https://5394-45-184-102-76.ngrok-free.app/user`, { headers });
                 setUserData(response.data);
             } catch (error) {
                 console.error(error);
@@ -52,7 +52,7 @@ const UserListScreen = () => {
                 Authorization: `Bearer ${accessToken}`
             };
     
-            const url = `https://08c2-181-199-59-134.ngrok-free.app/user/${_id}`;
+            const url = `https://5394-45-184-102-76.ngrok-free.app/user/${_id}`;
             console.log('URL:', url);
             console.log('Updated Data:', updatedUserData);
     
@@ -75,7 +75,7 @@ const UserListScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.delete(`https://08c2-181-199-59-134.ngrok-free.app/user/${userId}`, { headers });
+            await axios.delete(`https://5394-45-184-102-76.ngrok-free.app/user/${userId}`, { headers });
             Alert.alert('Éxito', 'Usuario eliminado correctamente.');
             setUserData(userData.filter(user => user._id !== userId));
         } catch (error) {

@@ -24,7 +24,7 @@ const VeterinaryRequestsScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://08c2-181-199-59-134.ngrok-free.app/veterinaria`, { headers });
+                const response = await axios.get(`https://5394-45-184-102-76.ngrok-free.app/veterinaria`, { headers });
                 const unverifiedVets = response.data.filter(vet => !vet.isVerified);
                 setVetData(unverifiedVets);
             } catch (error) {
@@ -53,7 +53,7 @@ const VeterinaryRequestsScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.patch(`https://08c2-181-199-59-134.ngrok-free.app/veterinaria/${editingVetId}`, editVetData, { headers });
+            await axios.patch(`https://5394-45-184-102-76.ngrok-free.app/veterinaria/${editingVetId}`, editVetData, { headers });
             Alert.alert('Éxito', 'Veterinaria actualizada correctamente.');
             setVetData(vetData.map(vet => (vet._id === editingVetId ? editVetData : vet)));
             setEditingVetId(null);
@@ -74,7 +74,7 @@ const VeterinaryRequestsScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.delete(`https://08c2-181-199-59-134.ngrok-free.app/veterinaria/${vetId}`, { headers });
+            await axios.delete(`https://5394-45-184-102-76.ngrok-free.app/veterinaria/${vetId}`, { headers });
             Alert.alert('Éxito', 'Veterinaria eliminada correctamente.');
             setVetData(vetData.filter(vet => vet._id !== vetId));
         } catch (error) {
@@ -94,8 +94,8 @@ const VeterinaryRequestsScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.patch(`https://08c2-181-199-59-134.ngrok-free.app/veterinaria/${vetId}`, { isVerified: true }, { headers });
-            await axios.patch(`https://08c2-181-199-59-134.ngrok-free.app/user/${userId}`, { isVetAdmin: true }, { headers });
+            await axios.patch(`https://5394-45-184-102-76.ngrok-free.app/veterinaria/${vetId}`, { isVerified: true }, { headers });
+            await axios.patch(`https://5394-45-184-102-76.ngrok-free.app/user/${userId}`, { isVetAdmin: true }, { headers });
             Alert.alert('Éxito', 'Veterinaria verificada correctamente.');
             setVetData(vetData.map(vet => (vet._id === vetId ? { ...vet, isVerified: true } : vet)));
       

@@ -33,7 +33,7 @@ const RegisterScreen = () => {
     };
 
     try {
-      const response = await axios.post(`https://08c2-181-199-59-134.ngrok-free.app/auth/register`, userData);
+      const response = await axios.post(`https://5394-45-184-102-76.ngrok-free.app/auth/register`, userData);
       Alert.alert('Registro exitoso');
       navigation.navigate('Login');
     } catch (error) {

@@ -26,7 +26,7 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://08c2-181-199-59-134.ngrok-free.app/veterinaria/${vetId}`, { headers });
+                const response = await axios.get(`https://5394-45-184-102-76.ngrok-free.app/veterinaria/${vetId}`, { headers });
                 console.log('Response from API:', response.data);
 
                 setVet(response.data);
@@ -64,7 +64,7 @@ const VeterinaryDetailScreen = ({ route, navigation }) => {
                 score: rating
             };
 
-            const response = await axios.patch(`https://08c2-181-199-59-134.ngrok-free.app/veterinaria/rate/${vetId}`, rateData, { headers });
+            const response = await axios.patch(`https://5394-45-184-102-76.ngrok-free.app/veterinaria/rate/${vetId}`, rateData, { headers });
 
             setVet(response.data);
             Alert.alert('Éxito', 'Tu calificación ha sido enviada.');
