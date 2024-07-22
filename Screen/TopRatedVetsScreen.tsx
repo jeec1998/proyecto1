@@ -25,7 +25,7 @@ const TopRatedVetsScreen = ({ navigation }) => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://e0b2-2800-bf0-2401-38c-e4bb-98c1-2836-d32e.ngrok-free.app/veterinaria/top-rated`, { headers });
+                const response = await axios.get(`https://08c2-181-199-59-134.ngrok-free.app/veterinaria/top-rated`, { headers });
                 console.log('Response from API:', response.data);
 
                 setTopVets(response.data);

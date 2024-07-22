@@ -24,7 +24,7 @@ const NormalVeterinaryListScreen = () => {
                 const headers = {
                     Authorization: `Bearer ${accessToken}`
                 };
-                const response = await axios.get(`https://e0b2-2800-bf0-2401-38c-e4bb-98c1-2836-d32e.ngrok-free.app/veterinaria`, { headers });
+                const response = await axios.get(`https://08c2-181-199-59-134.ngrok-free.app/veterinaria`, { headers });
                 const verifiedVets = response.data.filter(vet => vet.isVerified);
                 setVetData(verifiedVets);
             } catch (error) {
@@ -58,7 +58,7 @@ const NormalVeterinaryListScreen = () => {
                 description: editVetData.description,
                 veterinaryContactNumber: editVetData.veterinaryContactNumber,
             };
-            await axios.patch(`https://e0b2-2800-bf0-2401-38c-e4bb-98c1-2836-d32e.ngrok-free.app/veterinaria/${editingVetId}`, body, { headers });
+            await axios.patch(`https://08c2-181-199-59-134.ngrok-free.app/veterinaria/${editingVetId}`, body, { headers });
             Alert.alert('Éxito', 'Veterinaria actualizada correctamente.');
             setVetData(vetData.map(vet => (vet._id === editingVetId ? editVetData : vet)));
             setEditingVetId(null);
@@ -79,8 +79,8 @@ const NormalVeterinaryListScreen = () => {
             const headers = {
                 Authorization: `Bearer ${accessToken}`
             };
-            await axios.delete(`https://e0b2-2800-bf0-2401-38c-e4bb-98c1-2836-d32e.ngrok-free.app/veterinaria/${vetId}`, { headers });
-            await axios.patch(`https://e0b2-2800-bf0-2401-38c-e4bb-98c1-2836-d32e.ngrok-free.app/user/${userId}`, { isVetAdmin: false }, { headers });
+            await axios.delete(`https://08c2-181-199-59-134.ngrok-free.app/veterinaria/${vetId}`, { headers });
+            await axios.patch(`https://08c2-181-199-59-134.ngrok-free.app/user/${userId}`, { isVetAdmin: false }, { headers });
             Alert.alert('Éxito', 'Veterinaria eliminada correctamente.');
             setVetData(vetData.filter(vet => vet._id !== vetId));
         } catch (error) {
