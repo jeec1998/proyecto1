@@ -11,8 +11,8 @@ const FirstScreen = () => {
   const [search, setSearch] = useState('');
   const [menuVisible, setMenuVisible] = useState(false);
   const [location, setLocation] = useState({
-    latitude: -1.66355,
-    longitude: -78.6546,
+    latitude: -1.656823,
+    longitude: -78.6756244,
     latitudeDelta: 0.001,
     longitudeDelta: 0.001,
   });
